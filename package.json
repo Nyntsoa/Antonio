@@ -1,0 +1,13 @@
+{
+  "name": "antonio-portfolio",
+  "private": true,
+  "scripts": {
+    "css:build": "tailwindcss -i ./assets/src/input.css -o ./portfolio_site/static/css/site.css --minify",
+    "css:watch": "tailwindcss -i ./assets/src/input.css -o ./portfolio_site/static/css/site.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "postcss": "8.5.32",
+    "autoprefixer": "10.4.21"
+  }
+}

@@ -1,0 +1,7 @@
+{% extends 'portfolio_site/base.html' %}{% block title %}Services — {{ site_profile.name|default:'AMBININTSOA Antonio' }}{% endblock %}{% block content %}
+<section class="services-screen" aria-labelledby="services-heading">
+  <header class="screen-heading"><div><p class="eyebrow">Accompagnement</p><h1 id="services-heading">Des services web<br>adaptés à vos besoins.</h1><p>Du site vitrine à l’application web, selon votre projet.</p></div><a class="button button-primary" href="{% url 'contact' %}">Présenter mon projet <span aria-hidden="true">↗</span></a></header>
+  {% if services %}<div class="service-grid screen-service-grid">{% for service in services %}<article class="service-card soft-card"><span class="service-icon" aria-hidden="true">{{ service.title|slice:":1" }}</span><div class="service-card-copy"><div class="service-meta"><span>0{{ forloop.counter }}</span><span aria-hidden="true">↗</span></div><h2>{{ service.title }}</h2><p>{{ service.description }}</p></div></article>{% endfor %}</div>{% else %}<p class="empty-note soft-card">Les services seront bientôt présentés ici.</p>{% endif %}
+  <p class="screen-note">Chaque accompagnement commence par un échange sur votre besoin.</p>
+</section>
+{% endblock %}
