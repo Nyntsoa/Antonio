@@ -59,6 +59,8 @@ WSGI_APPLICATION = "portfolio.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 if DATABASE_URL:
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=not DEBUG)}
+    if IS_VERCEL:
+        DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 else:
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
 

@@ -1,0 +1,2 @@
+[tool.vercel.scripts]
+build = 'if [ "$VERCEL_ENV" = "production" ]; then if [ -z "$DATABASE_URL_UNPOOLED" ]; then echo "DATABASE_URL_UNPOOLED must be set to the direct PostgreSQL URL for production migrations." >&2; exit 1; fi; DATABASE_URL="$DATABASE_URL_UNPOOLED" python manage.py migrate --noinput && DATABASE_URL="$DATABASE_URL_UNPOOLED" python manage.py createcachetable portfolio_cache; fi'
