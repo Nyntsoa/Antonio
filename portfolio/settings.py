@@ -10,15 +10,18 @@ load_dotenv(BASE_DIR / ".env")
 def env_bool(name, default=False):
     return os.getenv(name, str(default)).lower() in {"1", "true", "yes", "on"}
 
-IS_VERCEL = os.getenv("VERCEL", "").lower() in {"1", "true"}
+IS_VERCEL = any(os.getenv(name, "").strip() for name in (
+    "VERCEL", "VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL",
+))
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me-before-deploy")
-DEBUG = env_bool("DJANGO_DEBUG", not IS_VERCEL)
+DEBUG = env_bool("DJANGO_DEBUG", True) and not IS_VERCEL
 if not DEBUG and (SECRET_KEY == "dev-only-change-me-before-deploy" or len(SECRET_KEY) < 50):
     raise RuntimeError("Configure a random DJANGO_SECRET_KEY of at least 50 characters before production.")
 ALLOWED_HOSTS = [host.strip() for host in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()]
 VERCEL_HOSTS = [os.getenv(name, "").strip() for name in (
     "VERCEL_URL", "VERCEL_BRANCH_URL", "VERCEL_PROJECT_PRODUCTION_URL",
 ) if os.getenv(name, "").strip()]
+VERCEL_HOSTS.append("antonio-seven-tau.vercel.app")
 ALLOWED_HOSTS = list(dict.fromkeys([*ALLOWED_HOSTS, *VERCEL_HOSTS]))
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()]
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys([

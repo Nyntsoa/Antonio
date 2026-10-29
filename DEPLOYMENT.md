@@ -14,7 +14,7 @@ Copiez `.env.example` dans l’environnement du fournisseur et configurez au min
 
 Ne commitez jamais `.env`. Utilisez le gestionnaire de secrets du fournisseur en production. La configuration sécurise les cookies, active HSTS et désactive `DEBUG` lorsque l’environnement le demande. Si TLS est terminé sur un proxy, configurez aussi celui-ci pour transmettre correctement `X-Forwarded-Proto` avant d’activer la redirection HTTPS.
 
-Sur Vercel, `VERCEL` désactive `DEBUG` par défaut et les domaines fournis par Vercel sont ajoutés à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS`. Définissez quand même `DJANGO_SECRET_KEY` avec une valeur aléatoire d'au moins 50 caractères. Supprimez toute variable Vercel `DJANGO_DEBUG=True` existante, puis redéployez pour que l'erreur ne révèle plus la page de diagnostic Django.
+Sur Vercel, `DEBUG` est désactivé et les domaines fournis par Vercel sont ajoutés à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS`. Définissez quand même `DJANGO_SECRET_KEY` avec une valeur aléatoire d'au moins 50 caractères. Après modification, redéployez l'application : le site en ligne continue d'utiliser l'ancienne configuration jusqu'au prochain déploiement.
 
 ## Commandes de livraison
 
