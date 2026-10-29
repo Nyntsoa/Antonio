@@ -21,6 +21,10 @@ const motionToggle = document.querySelector('#motion-toggle');
 const root = document.documentElement;
 
 function syncSetting(button, enabled) {
+  if (button?.getAttribute('role') === 'switch') {
+    button.setAttribute('aria-checked', String(enabled));
+    return;
+  }
   button?.setAttribute('aria-pressed', String(enabled));
 }
 
