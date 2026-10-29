@@ -21,7 +21,7 @@ ALLOWED_HOSTS = [host.strip() for host in os.getenv("DJANGO_ALLOWED_HOSTS", "loc
 VERCEL_HOSTS = [os.getenv(name, "").strip() for name in (
     "VERCEL_URL", "VERCEL_BRANCH_URL", "VERCEL_PROJECT_PRODUCTION_URL",
 ) if os.getenv(name, "").strip()]
-VERCEL_HOSTS.append("antonio-seven-tau.vercel.app")
+VERCEL_HOSTS.append("ambinintsoa-antonio.vercel.app")
 ALLOWED_HOSTS = list(dict.fromkeys([*ALLOWED_HOSTS, *VERCEL_HOSTS]))
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()]
 CSRF_TRUSTED_ORIGINS = list(dict.fromkeys([
@@ -57,6 +57,8 @@ TEMPLATES = [{
 }]
 WSGI_APPLICATION = "portfolio.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL", "")
+if IS_VERCEL and not DATABASE_URL:
+    raise RuntimeError("Set DATABASE_URL to a persistent PostgreSQL connection string in Vercel.")
 if DATABASE_URL:
     DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=not DEBUG)}
     if IS_VERCEL:
