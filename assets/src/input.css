@@ -612,3 +612,6 @@ img,svg { display:block; max-width:100%; }
   .theme-switch { right:12px; }
   .settings-toggle.mobile-settings { right:82px; }
 }
+@media (min-width:1000px) {
+  .site-header .desktop-settings { position:fixed; z-index:44; top:18px; right:calc(max(clamp(14px,3vw,64px),calc(50vw - 720px)) + 76px); width:42px; height:42px; border:1px solid var(--line); border-radius:50%; background:var(--card); box-shadow:var(--shadow); }
+}
