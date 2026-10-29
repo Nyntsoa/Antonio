@@ -5,14 +5,16 @@
 Copiez `.env.example` dans l’environnement du fournisseur et configurez au minimum :
 
 - `DJANGO_SECRET_KEY` : secret long, aléatoire et propre à l’environnement.
-- `DJANGO_DEBUG=False`
-- `DJANGO_ALLOWED_HOSTS=portfolio.example.com`
-- `DJANGO_CSRF_TRUSTED_ORIGINS=https://portfolio.example.com`
+- `DJANGO_DEBUG=False` (obligatoire en production ; ne le définissez pas à `True` sur Vercel).
+- `DJANGO_ALLOWED_HOSTS=portfolio.example.com` pour un domaine personnalisé. Sur Vercel, les domaines de déploiement, de branche et de production sont ajoutés automatiquement depuis les variables système de Vercel.
+- `DJANGO_CSRF_TRUSTED_ORIGINS=https://portfolio.example.com` pour un domaine personnalisé. Les origines HTTPS Vercel sont ajoutées automatiquement.
 - `DATABASE_URL=postgresql://...` (identifiants fournis par l’hébergeur)
 - `SECURE_SSL_REDIRECT=True` si le HTTPS est correctement transmis au serveur Django.
 - Variables SMTP : `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS=True`, `DEFAULT_FROM_EMAIL` et `CONTACT_NOTIFY_EMAIL`.
 
 Ne commitez jamais `.env`. Utilisez le gestionnaire de secrets du fournisseur en production. La configuration sécurise les cookies, active HSTS et désactive `DEBUG` lorsque l’environnement le demande. Si TLS est terminé sur un proxy, configurez aussi celui-ci pour transmettre correctement `X-Forwarded-Proto` avant d’activer la redirection HTTPS.
+
+Sur Vercel, `VERCEL` désactive `DEBUG` par défaut et les domaines fournis par Vercel sont ajoutés à `ALLOWED_HOSTS` et `CSRF_TRUSTED_ORIGINS`. Définissez quand même `DJANGO_SECRET_KEY` avec une valeur aléatoire d'au moins 50 caractères. Supprimez toute variable Vercel `DJANGO_DEBUG=True` existante, puis redéployez pour que l'erreur ne révèle plus la page de diagnostic Django.
 
 ## Commandes de livraison
 
