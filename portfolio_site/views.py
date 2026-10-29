@@ -11,7 +11,8 @@ from .forms import ContactForm
 from .models import Category, Project, Service, Skill, SiteProfile
 
 def home(request):
-    return render(request, "portfolio_site/home.html")
+    projects = Project.objects.filter(status=Project.Status.PUBLISHED).select_related("category").order_by("-featured", "order", "-created_at")[:2]
+    return render(request, "portfolio_site/home.html", {"featured_projects": projects})
 
 def about(request):
     return render(request, "portfolio_site/about.html", {"skills": Skill.objects.filter(active=True)})
