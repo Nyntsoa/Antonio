@@ -1,4 +1,5 @@
 {% extends 'portfolio_site/base.html' %}
+{% load static %}
 {% block content %}
 <section class="home-screen" aria-labelledby="hero-title">
   <div class="home-copy">
@@ -10,7 +11,11 @@
     <div class="hero-actions"><a class="button button-primary" href="{% url 'project_list' %}">Voir mes réalisations <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="{% url 'contact' %}">Me contacter</a></div>
   </div>
   <figure class="hero-photo-wrap">
-    {% if site_profile.photo %}<img class="hero-photo" src="{{ site_profile.photo.url }}"{% if site_profile.photo_srcset %} srcset="{{ site_profile.photo_srcset }}" sizes="100vw"{% endif %} alt="Portrait de {{ site_profile.name }}" width="1280" height="960" decoding="async" fetchpriority="high">{% else %}<div class="hero-photo-placeholder" role="img" aria-label="Portrait à ajouter dans le profil du site"><span>A.</span><small>Portrait à ajouter</small></div>{% endif %}
+    {% if site_profile.photo %}
+      <img class="hero-photo" src="{{ site_profile.photo.url }}"{% if site_profile.photo_srcset %} srcset="{{ site_profile.photo_srcset }}" sizes="100vw"{% endif %} alt="Portrait de {{ site_profile.name }}" width="1280" height="960" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.removeAttribute('srcset');this.src='{% static "portfolio_site/images/portrait-960.webp" %}'">
+    {% else %}
+      <img class="hero-photo" src="{% static "portfolio_site/images/portrait-960.webp" %}" srcset="{% static "portfolio_site/images/portrait-320.webp" %} 320w, {% static "portfolio_site/images/portrait-640.webp" %} 640w, {% static "portfolio_site/images/portrait-960.webp" %} 960w, {% static "portfolio_site/images/portrait-1280.webp" %} 1280w" sizes="100vw" alt="Portrait de {{ site_profile.name|default:'AMBININTSOA Antonio' }}" width="1280" height="960" decoding="async" fetchpriority="high">
+    {% endif %}
     {% if site_profile.photo %}<figcaption>{{ site_profile.name|default:'AMBININTSOA Antonio' }} · {{ site_profile.location|default:'Madagascar' }}</figcaption>{% endif %}
   </figure>
 </section>
