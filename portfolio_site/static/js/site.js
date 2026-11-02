@@ -24,73 +24,24 @@ if (toggle && nav) {
   });
 }
 
-const settingsToggles = [...document.querySelectorAll('.settings-toggle, .accessibility-toggle')];
-const settingsPanel = document.querySelector('#display-settings');
 const themeToggle = document.querySelector('#theme-toggle');
-const motionToggle = document.querySelector('#motion-toggle');
 const root = document.documentElement;
 
-function syncSetting(button, enabled) {
-  if (button?.getAttribute('role') === 'switch') {
-    button.setAttribute('aria-checked', String(enabled));
-    return;
-  }
-  button?.setAttribute('aria-pressed', String(enabled));
+function syncThemeToggle(enabled) {
+  themeToggle?.setAttribute('aria-checked', String(enabled));
 }
 
-if (themeToggle) syncSetting(themeToggle, root.dataset.theme === 'dark');
-if (motionToggle) syncSetting(motionToggle, root.dataset.motion === 'reduced');
-
-let panelCloseTimer;
-let activeSettingsTrigger = null;
-function setSettingsOpen(open) {
-  if (!settingsPanel) return;
-  clearTimeout(panelCloseTimer);
-  settingsToggles.forEach((toggle) => toggle.setAttribute('aria-expanded', String(open)));
-  if (open) {
-    settingsPanel.hidden = false;
-    requestAnimationFrame(() => settingsPanel.classList.add('is-open'));
-    return;
-  }
-  settingsPanel.classList.remove('is-open');
-  const reduce = root.dataset.motion === 'reduced' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  panelCloseTimer = setTimeout(() => { settingsPanel.hidden = true; }, reduce ? 0 : 240);
-}
-
-settingsToggles.forEach((toggle) => toggle.addEventListener('click', () => {
-  activeSettingsTrigger = toggle;
-  setSettingsOpen(toggle.getAttribute('aria-expanded') !== 'true');
-}));
+if (themeToggle) syncThemeToggle(root.dataset.theme === 'dark');
 
 themeToggle?.addEventListener('click', () => {
   const dark = root.dataset.theme !== 'dark';
   if (dark) root.dataset.theme = 'dark';
   else delete root.dataset.theme;
-  syncSetting(themeToggle, dark);
+  syncThemeToggle(dark);
   try { localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light'); } catch (_) {}
 });
 
-motionToggle?.addEventListener('click', () => {
-  const reduced = root.dataset.motion !== 'reduced';
-  if (reduced) root.dataset.motion = 'reduced';
-  else delete root.dataset.motion;
-  syncSetting(motionToggle, reduced);
-  try { localStorage.setItem('portfolio-motion', reduced ? 'reduced' : 'full'); } catch (_) {}
-});
-
-document.addEventListener('click', (event) => {
-  if (!settingsPanel || settingsPanel.hidden || event.target.closest('.settings-panel, .settings-toggle, .accessibility-toggle')) return;
-  setSettingsOpen(false);
-});
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && settingsPanel && !settingsPanel.hidden) {
-    setSettingsOpen(false);
-    activeSettingsTrigger?.focus();
-  }
-});
-
-const motionAllowed = window.matchMedia('(prefers-reduced-motion: no-preference)').matches && root.dataset.motion !== 'reduced';
+const motionAllowed = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
 if (motionAllowed) {
   const intro = document.querySelector('.home-copy, .screen-heading, .contact-copy, .about-intro, .detail-heading');
   if (intro) {
