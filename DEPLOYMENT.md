@@ -37,6 +37,8 @@ Créez le compte administrateur avec `python manage.py createsuperuser`. N’ajo
 
 `collectstatic` rassemble le CSS/JS avec WhiteNoise. En production, le compteur antispam utilise la table de cache Django (`createcachetable`) pour être partagé entre les workers. Les téléversements utilisateur (`MEDIA_ROOT=media/`) doivent être stockés sur un volume persistant ou un stockage objet compatible et sauvegardé. N’utilisez pas le système de fichiers éphémère d’un conteneur pour les photos, CV ou visuels. Servez `/media/` depuis ce stockage via le domaine HTTPS et protégez les sauvegardes.
 
+Après le déploiement, lorsque le stockage persistant des médias est monté, lancez `python manage.py optimize_images` une fois. La commande crée les variantes WebP des images déjà téléversées; les nouveaux téléversements sont traités automatiquement.
+
 ## PostgreSQL et email
 
 Une variable `DATABASE_URL` PostgreSQL remplace automatiquement SQLite. Gardez une base distincte par environnement et exécutez les migrations pendant le déploiement. Sur Vercel, les migrations de production s'exécutent via `pyproject.toml` avec l'URL directe `DATABASE_URL_UNPOOLED`. Configurez SMTP avec TLS, un expéditeur autorisé par le fournisseur email et une adresse de notification contrôlée. En local, l'absence de `EMAIL_HOST` utilise le backend console.

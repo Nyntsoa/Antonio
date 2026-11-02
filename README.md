@@ -37,6 +37,8 @@ npm run css:build
 npm run css:watch
 ```
 
+Les images téléversées depuis l’administration génèrent automatiquement des variantes WebP selon leur taille d’affichage. Pour les médias déjà présents, lancez `python manage.py optimize_images` après la mise à jour du code.
+
 Le CSS compilé est livré dans le dépôt pour démarrer immédiatement. Relancez la compilation après modification des classes Tailwind ou du CSS source.
 
 ## Administration

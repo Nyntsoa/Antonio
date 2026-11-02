@@ -21,7 +21,7 @@
   </button>
   <header class="site-header"><div class="profile-bar">
     <a class="profile-identity" href="{% url 'home' %}" aria-label="Accueil — {{ site_profile.name|default:'AMBININTSOA Antonio' }}">
-      {% if site_profile.photo %}<img class="profile-avatar" src="{{ site_profile.photo.url }}" alt="" width="160" height="160">{% else %}<span class="profile-avatar avatar-initial" aria-hidden="true">A.</span>{% endif %}
+      {% if site_profile.photo %}<img class="profile-avatar" src="{{ site_profile.photo.url }}"{% if site_profile.photo_srcset %} srcset="{{ site_profile.photo_srcset }}" sizes="58px"{% endif %} alt="" width="160" height="160" decoding="async">{% else %}<span class="profile-avatar avatar-initial" aria-hidden="true">A.</span>{% endif %}
       <span class="profile-copy"><strong>{{ site_profile.name|default:'AMBININTSOA Antonio' }}</strong><small>{{ site_profile.profession|default:'Développeur web' }}{% if site_profile.location %} · {{ site_profile.location }}{% else %} · Madagascar{% endif %}</small></span>
     </a>
     <div class="sidebar-socials" aria-label="Réseaux et préférences">

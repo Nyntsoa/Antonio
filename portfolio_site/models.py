@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
+from .image_variants import create_image_variants, image_srcset
 
 IMAGE_VALIDATOR = FileExtensionValidator(["jpg", "jpeg", "png", "webp"])
 DOC_VALIDATOR = FileExtensionValidator(["pdf"])
@@ -64,6 +65,16 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def cover_srcset(self):
+        return image_srcset(self.cover)
+
+    def save(self, *args, **kwargs):
+        new_cover = bool(self.cover and getattr(self.cover, "_file", None))
+        super().save(*args, **kwargs)
+        if new_cover:
+            create_image_variants(self.cover)
+
     def get_absolute_url(self):
         return reverse("project_detail", kwargs={"slug": self.slug})
 
@@ -96,6 +107,16 @@ class ProjectImage(models.Model):
 
     def __str__(self):
         return self.caption or self.project.title
+
+    @property
+    def image_srcset(self):
+        return image_srcset(self.image)
+
+    def save(self, *args, **kwargs):
+        new_image = bool(self.image and getattr(self.image, "_file", None))
+        super().save(*args, **kwargs)
+        if new_image:
+            create_image_variants(self.image)
 
 class Service(models.Model):
     title = models.CharField("offre", max_length=120)
@@ -149,9 +170,15 @@ class SiteProfile(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def photo_srcset(self):
+        return image_srcset(self.photo)
+
     def save(self, *args, **kwargs):
         self.pk = 1
         super().save(*args, **kwargs)
+        if self.photo and getattr(self.photo, "_file", None):
+            create_image_variants(self.photo)
 
     @classmethod
     def get_solo(cls):

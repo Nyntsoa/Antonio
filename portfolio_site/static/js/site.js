@@ -118,3 +118,38 @@ if (motionAllowed) {
 
   }
 }
+
+// Warm the next same-origin document on deliberate link intent. This keeps
+// normal browser navigation and form behaviour while hiding server latency.
+const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const canWarmPages = !connection?.saveData && !['slow-2g', '2g'].includes(connection?.effectiveType);
+const warmedPages = new Set();
+
+function warmPageFrom(target, delay = 80) {
+  if (!canWarmPages) return;
+  const anchor = target instanceof Element ? target.closest('a[href]') : null;
+  if (!anchor || (anchor.target && anchor.target !== '_self') || anchor.hasAttribute('download')) return;
+  if (anchor.relList.contains('external') || anchor.relList.contains('nofollow') || anchor.dataset.noPrefetch !== undefined) return;
+
+  const url = new URL(anchor.href, window.location.href);
+  if (url.origin !== window.location.origin || url.pathname.startsWith('/admin/')) return;
+  if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+  if (warmedPages.has(url.href)) return;
+  warmedPages.add(url.href);
+
+  window.setTimeout(() => {
+    const hint = document.createElement('link');
+    hint.rel = 'prefetch';
+    hint.as = 'document';
+    hint.href = url.href;
+    document.head.append(hint);
+  }, delay);
+}
+
+document.addEventListener('pointerover', (event) => {
+  if (event.pointerType === 'mouse') warmPageFrom(event.target);
+});
+document.addEventListener('focusin', (event) => warmPageFrom(event.target));
+document.addEventListener('pointerdown', (event) => {
+  if (event.pointerType === 'touch') warmPageFrom(event.target, 0);
+});
