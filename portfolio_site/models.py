@@ -41,6 +41,7 @@ class Project(models.Model):
     slug = models.SlugField(unique=True)
     category = models.ForeignKey(Category, verbose_name="catégorie", on_delete=models.PROTECT, related_name="projects")
     summary = models.CharField("résumé", max_length=240)
+    live_url = models.URLField("lien du site", blank=True, help_text="Adresse publique du projet, si disponible.")
     context = models.TextField("contexte", blank=True)
     objective = models.TextField("objectif", blank=True)
     role = models.TextField("rôle", blank=True)
@@ -89,6 +90,8 @@ class Project(models.Model):
             "site-vitrine-cafe": "images/demo-site-vitrine-cafe.svg",
             "boutique-artisanale": "images/demo-boutique-artisanale.svg",
             "tableau-de-bord-associatif": "images/demo-tableau-de-bord-associatif.svg",
+            "tsarakaly": "images/projects/tsarakaly.jpg",
+            "mada-market": "images/projects/mada-market.jpg",
         }
         asset = assets.get(self.slug)
         return static(asset) if asset else ""
