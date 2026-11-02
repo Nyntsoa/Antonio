@@ -6,16 +6,29 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.html import strip_tags
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
 from .forms import ContactForm
 from .models import Category, Project, Service, Skill, SiteProfile
 
+def public_page_cache(view):
+    """Let Vercel cache public HTML briefly while browsers always revalidate."""
+    return cache_control(
+        public=True,
+        max_age=0,
+        s_maxage=60,
+        stale_while_revalidate=300,
+    )(view)
+
+@public_page_cache
 def home(request):
     return render(request, "portfolio_site/home.html")
 
+@public_page_cache
 def about(request):
     return render(request, "portfolio_site/about.html", {"skills": Skill.objects.filter(active=True)})
 
+@public_page_cache
 def project_list(request):
     categories = Category.objects.filter(projects__status=Project.Status.PUBLISHED).distinct()
     selected = request.GET.get("category", "")
@@ -25,10 +38,12 @@ def project_list(request):
     page_obj = Paginator(projects, 3).get_page(request.GET.get("page"))
     return render(request, "portfolio_site/projects.html", {"projects": page_obj.object_list, "page_obj": page_obj, "categories": categories, "selected_category": selected})
 
+@public_page_cache
 def project_detail(request, slug):
     project = get_object_or_404(Project.objects.select_related("category").prefetch_related("images"), slug=slug, status=Project.Status.PUBLISHED)
     return render(request, "portfolio_site/project_detail.html", {"project": project})
 
+@public_page_cache
 def services(request):
     return render(request, "portfolio_site/services.html", {"services": Service.objects.filter(active=True)})
 
@@ -56,12 +71,14 @@ def contact_submit(request):
         return redirect("contact")
     return render(request, "portfolio_site/contact.html", {"form": form}, status=400)
 
+@public_page_cache
 def legal(request):
     profile = SiteProfile.objects.first()
     if not profile or (not profile.legal_notice and not profile.privacy_notice):
         return render(request, "portfolio_site/legal.html")
     return render(request, "portfolio_site/legal.html", {"profile": profile})
 
+@cache_control(public=True, max_age=0, s_maxage=86400, stale_while_revalidate=86400)
 def robots_txt(request):
     return HttpResponse("User-agent: *\nAllow: /\nSitemap: https://" + request.get_host() + "/sitemap.xml\n", content_type="text/plain")
 
