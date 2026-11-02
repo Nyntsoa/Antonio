@@ -90,8 +90,8 @@ class Project(models.Model):
             "site-vitrine-cafe": "images/demo-site-vitrine-cafe.svg",
             "boutique-artisanale": "images/demo-boutique-artisanale.svg",
             "tableau-de-bord-associatif": "images/demo-tableau-de-bord-associatif.svg",
-            "tsarakaly": "images/projects/tsarakaly.jpg",
-            "mada-market": "images/projects/mada-market.jpg",
+            "tsarakaly": "portfolio_site/images/projects/tsarakaly.jpg",
+            "mada-market": "portfolio_site/images/projects/mada-market.jpg",
         }
         asset = assets.get(self.slug)
         return static(asset) if asset else ""
