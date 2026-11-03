@@ -37,6 +37,8 @@ Créez le compte administrateur avec `python manage.py createsuperuser`. N’ajo
 
 `collectstatic` rassemble le CSS/JS avec WhiteNoise. En production, le compteur antispam utilise la table de cache Django (`createcachetable`) pour être partagé entre les workers. Les téléversements utilisateur (`MEDIA_ROOT=media/`) doivent être stockés sur un volume persistant ou un stockage objet compatible et sauvegardé. N’utilisez pas le système de fichiers éphémère d’un conteneur pour les photos, CV ou visuels. Servez `/media/` depuis ce stockage via le domaine HTTPS et protégez les sauvegardes.
 
+Les fichiers `/static/` versionnés sont mis en cache un an par le navigateur. Les pages publiques sont mises en cache 60 secondes dans le navigateur et 5 minutes sur le CDN Vercel ; après une modification dans l’administration, la mise à jour peut donc prendre quelques minutes à apparaître publiquement.
+
 Après le déploiement, lorsque le stockage persistant des médias est monté, lancez `python manage.py optimize_images` une fois. La commande crée les variantes WebP des images déjà téléversées; les nouveaux téléversements sont traités automatiquement.
 
 ## PostgreSQL et email

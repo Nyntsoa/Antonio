@@ -2,10 +2,16 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.functional import cached_property
 from .image_variants import create_image_variants, image_srcset
 
 IMAGE_VALIDATOR = FileExtensionValidator(["jpg", "jpeg", "png", "webp"])
 DOC_VALIDATOR = FileExtensionValidator(["pdf"])
+DEMO_IMAGE_ASSETS = {
+    "tsarakaly": "portfolio_site/images/projects/tsarakaly",
+    "mada-market": "portfolio_site/images/projects/mada-market",
+}
+DEMO_IMAGE_WIDTHS = (320, 640, 960, 1440)
 
 def validate_upload_size(file):
     if file.size > 5 * 1024 * 1024:
@@ -66,11 +72,14 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
-    @property
+    @cached_property
     def cover_srcset(self):
         return image_srcset(self.cover)
 
     def save(self, *args, **kwargs):
+        self.__dict__.pop("cover_srcset", None)
+        self.__dict__.pop("demo_image_url", None)
+        self.__dict__.pop("demo_image_srcset", None)
         new_cover = bool(self.cover and getattr(self.cover, "_file", None))
         super().save(*args, **kwargs)
         if new_cover:
@@ -83,18 +92,30 @@ class Project(models.Model):
     def tool_list(self):
         return [item.strip() for item in self.tools.split(",") if item.strip()]
 
-    @property
+    @cached_property
     def demo_image_url(self):
         from django.templatetags.static import static
-        assets = {
+        asset = DEMO_IMAGE_ASSETS.get(self.slug)
+        if asset:
+            return static(f"{asset}-960.webp")
+        illustrations = {
             "site-vitrine-cafe": "images/demo-site-vitrine-cafe.svg",
             "boutique-artisanale": "images/demo-boutique-artisanale.svg",
             "tableau-de-bord-associatif": "images/demo-tableau-de-bord-associatif.svg",
-            "tsarakaly": "portfolio_site/images/projects/tsarakaly.jpg",
-            "mada-market": "portfolio_site/images/projects/mada-market.jpg",
         }
-        asset = assets.get(self.slug)
-        return static(asset) if asset else ""
+        illustration = illustrations.get(self.slug)
+        return static(illustration) if illustration else ""
+
+    @cached_property
+    def demo_image_srcset(self):
+        from django.templatetags.static import static
+        asset = DEMO_IMAGE_ASSETS.get(self.slug)
+        if not asset:
+            return ""
+        return ", ".join(
+            f"{static(f'{asset}-{width}.webp')} {width}w"
+            for width in DEMO_IMAGE_WIDTHS
+        )
 
 class ProjectImage(models.Model):
     project = models.ForeignKey(Project, verbose_name="projet", on_delete=models.CASCADE, related_name="images")
@@ -111,11 +132,12 @@ class ProjectImage(models.Model):
     def __str__(self):
         return self.caption or self.project.title
 
-    @property
+    @cached_property
     def image_srcset(self):
         return image_srcset(self.image)
 
     def save(self, *args, **kwargs):
+        self.__dict__.pop("image_srcset", None)
         new_image = bool(self.image and getattr(self.image, "_file", None))
         super().save(*args, **kwargs)
         if new_image:
@@ -173,11 +195,12 @@ class SiteProfile(models.Model):
     def __str__(self):
         return self.name
 
-    @property
+    @cached_property
     def photo_srcset(self):
         return image_srcset(self.photo)
 
     def save(self, *args, **kwargs):
+        self.__dict__.pop("photo_srcset", None)
         self.pk = 1
         super().save(*args, **kwargs)
         if self.photo and getattr(self.photo, "_file", None):

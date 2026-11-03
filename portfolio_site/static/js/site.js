@@ -291,6 +291,3 @@ document.addEventListener('pointerover', (event) => {
   if (event.pointerType === 'mouse') warmPageFrom(event.target);
 });
 document.addEventListener('focusin', (event) => warmPageFrom(event.target));
-document.addEventListener('pointerdown', (event) => {
-  if (event.pointerType === 'touch') warmPageFrom(event.target, 0);
-});

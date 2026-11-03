@@ -12,12 +12,12 @@ from .forms import ContactForm
 from .models import Category, Project, Service, Skill, SiteProfile
 
 def public_page_cache(view):
-    """Let Vercel cache public HTML briefly while browsers always revalidate."""
+    """Cache public portfolio pages briefly in browsers and longer at the edge."""
     return cache_control(
         public=True,
-        max_age=0,
-        s_maxage=60,
-        stale_while_revalidate=300,
+        max_age=60,
+        s_maxage=300,
+        stale_while_revalidate=3600,
     )(view)
 
 @public_page_cache

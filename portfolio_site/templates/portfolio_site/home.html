@@ -32,7 +32,7 @@
           {% if project.cover %}
             <img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="(max-width: 600px) 68vw, (max-width: 999px) 45vw, 370px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
           {% elif project.demo_image_url %}
-            <img src="{{ project.demo_image_url }}" alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
+            <img src="{{ project.demo_image_url }}"{% if project.demo_image_srcset %} srcset="{{ project.demo_image_srcset }}" sizes="(max-width: 600px) 68vw, (max-width: 999px) 45vw, 370px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
           {% else %}
             <span class="home-work-placeholder" aria-hidden="true"></span>
           {% endif %}

@@ -1690,11 +1690,32 @@ body:has(.home-work) .site-footer {
     transform:translateX(-50%) !important;
   }
   #primary-nav.desktop-nav a {
-    width:44px !important;
-    min-width:44px !important;
+    display:grid !important;
+    place-items:center;
+    box-sizing:border-box;
+    width:clamp(38px,11vw,44px) !important;
+    min-width:clamp(38px,11vw,44px) !important;
+    max-width:clamp(38px,11vw,44px) !important;
     height:44px !important;
     min-height:44px !important;
-    flex:0 0 44px !important;
+    flex:0 0 clamp(38px,11vw,44px) !important;
+    padding:0 !important;
+    line-height:0;
+    transform:none !important;
+    transition:background-color .18s ease,color .18s ease,box-shadow .18s ease;
+    -webkit-tap-highlight-color:transparent;
     touch-action:manipulation;
+  }
+  #primary-nav.desktop-nav a:hover,
+  #primary-nav.desktop-nav a:active,
+  #primary-nav.desktop-nav a:focus { transform:none !important; }
+  #primary-nav.desktop-nav a svg { pointer-events:none; }
+  #primary-nav.desktop-nav a:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+}
+@media (max-width:999px) and (hover:none) and (pointer:coarse) {
+  #primary-nav.desktop-nav a:hover:not([aria-current=page]) {
+    background:transparent !important;
+    color:var(--muted) !important;
+    box-shadow:none !important;
   }
 }
