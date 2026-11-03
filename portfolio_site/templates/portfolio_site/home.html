@@ -1,5 +1,4 @@
 {% extends 'portfolio_site/base.html' %}
-{% load static %}
 {% block content %}
 <section class="home-screen" aria-labelledby="hero-title">
   <div class="home-copy">
@@ -10,38 +9,26 @@
     <ul class="hero-tech" aria-label="Technologies principales"><li>Django</li><li>React</li><li>PostgreSQL</li></ul>
     <div class="hero-actions"><a class="button button-primary" href="{% url 'project_list' %}">Voir mes réalisations <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="{% url 'contact' %}">Me contacter</a></div>
   </div>
-  <figure class="hero-photo-wrap">
-    {% if site_profile.photo %}
-      <img class="hero-photo" src="{{ site_profile.photo.url }}"{% if site_profile.photo_srcset %} srcset="{{ site_profile.photo_srcset }}" sizes="100vw"{% endif %} alt="Portrait de {{ site_profile.name }}" width="1280" height="960" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.removeAttribute('srcset');this.src='{% static "portfolio_site/images/portrait-960.webp" %}'">
-    {% else %}
-      <img class="hero-photo" src="{% static "portfolio_site/images/portrait-960.webp" %}" srcset="{% static "portfolio_site/images/portrait-320.webp" %} 320w, {% static "portfolio_site/images/portrait-640.webp" %} 640w, {% static "portfolio_site/images/portrait-960.webp" %} 960w, {% static "portfolio_site/images/portrait-1280.webp" %} 1280w" sizes="100vw" alt="Portrait de {{ site_profile.name|default:'AMBININTSOA Antonio' }}" width="1280" height="960" decoding="async" fetchpriority="high">
-    {% endif %}
-    {% if site_profile.photo %}<figcaption>{{ site_profile.name|default:'AMBININTSOA Antonio' }} · {{ site_profile.location|default:'Madagascar' }}</figcaption>{% endif %}
+  <figure class="hero-photo-wrap hero-photo-wrap--abstract" aria-hidden="true">
+    <span class="hero-abstract-orbit hero-abstract-orbit--outer"></span>
+    <span class="hero-abstract-orbit hero-abstract-orbit--inner"></span>
+    <span class="hero-abstract-core"></span>
   </figure>
 </section>
 {% if projects %}
-<section class="home-work" id="realisations" aria-labelledby="home-work-title" data-work-carousel>
+<section class="home-work" id="realisations" aria-labelledby="home-work-title" data-work-showcase>
   <header class="home-work-heading">
     <div class="home-work-copy">
       <p class="eyebrow">Portfolio · {{ projects|length }} projet{{ projects|length|pluralize:"s" }}</p>
       <h2 id="home-work-title">Mes Réalisations</h2>
       <p>Des idées transformées en expériences web concrètes.</p>
     </div>
-    <div class="home-work-controls" aria-label="Contrôles des réalisations">
-      <button class="work-control" type="button" data-work-direction="-1" aria-label="Faire défiler vers la gauche">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      <button class="work-control" type="button" data-work-direction="1" aria-label="Faire défiler vers la droite">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-    </div>
   </header>
 
-  <div class="home-work-window" data-work-window tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Mes réalisations, faites glisser pour explorer">
-    <div class="home-work-track" data-work-track>
+  <div class="home-work-gallery" data-work-gallery>
       {% for project in projects %}
       {% with project_url=project.live_url|default:project.get_absolute_url %}
-      <article class="home-work-card" data-work-card aria-roledescription="diapositive" aria-label="{{ project.title }}, {{ forloop.counter }} sur {{ projects|length }}">
+      <article class="home-work-card" data-work-card aria-label="{{ project.title }}">
         <a class="home-work-art" href="{{ project_url }}"{% if project.live_url %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{% if project.live_url %}Visiter{% else %}Découvrir{% endif %} {{ project.title }}">
           {% if project.cover %}
             <img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="(max-width: 600px) 78vw, (max-width: 1000px) 42vw, 390px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async">
@@ -62,7 +49,6 @@
       </article>
       {% endwith %}
       {% endfor %}
-    </div>
   </div>
 </section>
 {% endif %}
