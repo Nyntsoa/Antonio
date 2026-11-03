@@ -26,6 +26,7 @@ if (toggle && nav) {
 
 const themeToggle = document.querySelector('#theme-toggle');
 const root = document.documentElement;
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
 function syncThemeToggle(enabled) {
   themeToggle?.setAttribute('aria-checked', String(enabled));
@@ -37,6 +38,7 @@ themeToggle?.addEventListener('click', () => {
   const dark = root.dataset.theme !== 'dark';
   if (dark) root.dataset.theme = 'dark';
   else delete root.dataset.theme;
+  themeColorMeta?.setAttribute('content', dark ? '#171417' : '#F4FFF9');
   syncThemeToggle(dark);
   try { localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light'); } catch (_) {}
 });

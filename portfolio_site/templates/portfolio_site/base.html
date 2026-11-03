@@ -4,9 +4,9 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{% if site_profile and site_profile.seo_title %}{{ site_profile.seo_title }}{% else %}{{ site_profile.name|default:'AMBININTSOA Antonio' }} — Développeur web{% endif %}{% endblock %}</title>
   <meta name="description" content="{% block description %}{% if site_profile and site_profile.seo_description %}{{ site_profile.seo_description }}{% else %}Développeur web à Madagascar. Conception de sites modernes, responsives et fonctionnels.{% endif %}{% endblock %}">
-  <meta name="theme-color" content="#f4f3ed"><meta property="og:type" content="website"><meta property="og:title" content="{% block og_title %}{{ site_profile.name|default:'AMBININTSOA Antonio' }} — Développeur web{% endblock %}"><meta property="og:description" content="{{ site_profile.seo_description|default:'Des solutions web utiles, pensées avec soin.' }}"><meta property="og:locale" content="fr_FR">
+  <meta name="theme-color" content="#F4FFF9"><meta property="og:type" content="website"><meta property="og:title" content="{% block og_title %}{{ site_profile.name|default:'AMBININTSOA Antonio' }} — Développeur web{% endblock %}"><meta property="og:description" content="{{ site_profile.seo_description|default:'Des solutions web utiles, pensées avec soin.' }}"><meta property="og:locale" content="fr_FR">
   <link rel="canonical" href="{{ request.build_absolute_uri }}"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='20' fill='%231b3156'/%3E%3Ctext x='50%25' y='58%25' text-anchor='middle' font-family='Arial' font-size='20' fill='white'%3EA%3C/text%3E%3C/svg%3E">
-  <script>try{if(localStorage.getItem('portfolio-theme')==='dark')document.documentElement.dataset.theme='dark'}catch(e){}</script>
+  <script>try{if(localStorage.getItem('portfolio-theme')==='dark'){document.documentElement.dataset.theme='dark';document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#171417')}}catch(e){}</script>
   <link rel="stylesheet" href="{% static 'css/site.css' %}"><script src="{% static 'js/site.js' %}" defer></script>
 </head>
 <body>
