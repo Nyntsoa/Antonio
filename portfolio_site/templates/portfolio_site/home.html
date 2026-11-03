@@ -25,7 +25,8 @@
     </div>
   </header>
 
-  <div class="home-work-gallery" data-work-gallery>
+  <div class="home-work-gallery" data-work-window tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Mes réalisations, défilement en boucle">
+    <div class="home-work-track" data-work-track>
       {% for project in projects %}
       {% with project_url=project.live_url|default:project.get_absolute_url %}
       <article class="home-work-card" data-work-card aria-label="{{ project.title }}">
@@ -49,6 +50,7 @@
       </article>
       {% endwith %}
       {% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}

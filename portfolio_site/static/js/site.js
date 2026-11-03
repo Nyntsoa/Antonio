@@ -82,43 +82,143 @@ if (motionAllowed) {
   }
 }
 
-// Shape each dynamically rendered project row into a gentle semicircular fan.
+// Move the project line at a steady speed while bending visible cards into an arc.
 document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
-  const gallery = showcase.querySelector('[data-work-gallery]');
-  const cards = Array.from(showcase.querySelectorAll('[data-work-card]'));
-  if (!gallery || !cards.length) return;
+  const windowElement = showcase.querySelector('[data-work-window]');
+  const track = showcase.querySelector('[data-work-track]');
+  if (!windowElement || !track) return;
 
-  const arrangeCards = () => {
-    const rows = new Map();
-    cards.forEach((card) => {
-      card.style.removeProperty('--work-tilt');
-      card.style.removeProperty('--work-lift');
-      const rowTop = card.offsetTop;
-      if (!rows.has(rowTop)) rows.set(rowTop, []);
-      rows.get(rowTop).push(card);
-    });
+  const cards = Array.from(track.querySelectorAll('[data-work-card]'));
+  if (!cards.length) return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cycleWidth = 0;
+  let offset = 0;
+  let targetOffset = 0;
+  let previousTime = 0;
+  let dragging = false;
+  let dragStartX = 0;
+  let dragStartOffset = 0;
+  let moved = false;
+  let suppressClickUntil = 0;
+  let resizeFrame = 0;
 
-    let rowIndex = 0;
-    rows.forEach((row) => {
-      const count = row.length;
-      row.forEach((card, index) => {
-        const position = count > 1 ? (index / (count - 1)) * 2 - 1 : 0;
-        const tilt = count > 1 ? position * 13 : (rowIndex % 2 ? 2.4 : -2.4);
-        const lift = count > 2 ? -68 * (1 - Math.abs(position)) : -18;
-        card.style.setProperty('--work-tilt', `${tilt.toFixed(1)}deg`);
-        card.style.setProperty('--work-lift', `${lift.toFixed(1)}px`);
-      });
-      rowIndex += 1;
+  const normalize = (value) => cycleWidth ? ((value % cycleWidth) + cycleWidth) % cycleWidth : 0;
+  const cloneCard = (card) => {
+    const clone = card.cloneNode(true);
+    clone.classList.add('home-work-clone');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.setAttribute('inert', '');
+    return clone;
+  };
+
+  const renderArc = () => {
+    if (!cycleWidth) return;
+    const visibleOffset = normalize(offset);
+    track.style.transform = `translate3d(${-visibleOffset}px, 0, 0)`;
+    const width = windowElement.clientWidth || 1;
+    const arcHeight = Math.min(108, Math.max(62, width * 0.12));
+
+    Array.from(track.children).forEach((card) => {
+      const cardWidth = card.getBoundingClientRect().width;
+      const center = card.offsetLeft - visibleOffset + cardWidth / 2;
+      const position = Math.max(-1.15, Math.min(1.15, (center / width) * 2 - 1));
+      const insideArc = Math.max(0, 1 - position * position);
+      card.style.setProperty('--work-tilt', `${(position * 12).toFixed(2)}deg`);
+      card.style.setProperty('--work-lift', `${(-arcHeight * insideArc).toFixed(2)}px`);
+      card.style.setProperty('--work-depth', String(Math.round(10 - Math.abs(position) * 5)));
     });
   };
 
-  let arrangeFrame = 0;
-  const scheduleArrange = () => {
-    cancelAnimationFrame(arrangeFrame);
-    arrangeFrame = requestAnimationFrame(arrangeCards);
+  const buildLoop = () => {
+    const progress = cycleWidth ? normalize(offset) / cycleWidth : 0;
+    track.replaceChildren(...cards);
+    cards.forEach((card, index) => {
+      card.setAttribute('aria-roledescription', 'diapositive');
+      card.setAttribute('aria-label', `${card.querySelector('h3')?.textContent.trim() || 'Projet'}, ${index + 1} sur ${cards.length}`);
+    });
+
+    const firstCopy = document.createDocumentFragment();
+    cards.forEach((card) => firstCopy.append(cloneCard(card)));
+    track.append(firstCopy);
+    cycleWidth = track.children[cards.length].offsetLeft - cards[0].offsetLeft;
+    if (!cycleWidth || !Number.isFinite(cycleWidth)) return;
+
+    const copies = Math.max(2, Math.ceil((windowElement.clientWidth + cycleWidth) / cycleWidth));
+    const remainingCopies = document.createDocumentFragment();
+    for (let cycle = 2; cycle < copies; cycle += 1) {
+      cards.forEach((card) => remainingCopies.append(cloneCard(card)));
+    }
+    track.append(remainingCopies);
+    offset = targetOffset = progress * cycleWidth;
+    renderArc();
   };
-  window.addEventListener('resize', scheduleArrange, { passive: true });
-  arrangeCards();
+
+  const scheduleBuild = () => {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(buildLoop);
+  };
+  const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(scheduleBuild) : null;
+  if (resizeObserver) {
+    resizeObserver.observe(windowElement);
+    showcase._workResizeObserver = resizeObserver;
+  }
+  window.addEventListener('resize', scheduleBuild, { passive: true });
+  buildLoop();
+
+  const frame = (time) => {
+    if (!previousTime) previousTime = time;
+    const elapsed = Math.max(0, time - previousTime);
+    previousTime = time;
+
+    if (!dragging && !reducedMotion) {
+      offset += elapsed * 0.05;
+      targetOffset = offset;
+    }
+    renderArc();
+    if (!reducedMotion) requestAnimationFrame(frame);
+  };
+  if (!reducedMotion) requestAnimationFrame(frame);
+
+  windowElement.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    dragging = true;
+    moved = false;
+    dragStartX = event.clientX;
+    dragStartOffset = offset;
+    targetOffset = offset;
+    windowElement.classList.add('is-dragging');
+    windowElement.setPointerCapture?.(event.pointerId);
+  });
+  windowElement.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    const distance = event.clientX - dragStartX;
+    if (Math.abs(distance) > 5) moved = true;
+    offset = dragStartOffset - distance;
+    targetOffset = offset;
+    renderArc();
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    windowElement.classList.remove('is-dragging');
+    if (moved) suppressClickUntil = performance.now() + 250;
+  };
+  windowElement.addEventListener('pointerup', endDrag);
+  windowElement.addEventListener('pointercancel', endDrag);
+  windowElement.addEventListener('click', (event) => {
+    if (performance.now() < suppressClickUntil) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+  windowElement.addEventListener('wheel', (event) => {
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
+    if (!delta) return;
+    event.preventDefault();
+    offset += delta;
+    targetOffset = offset;
+    renderArc();
+  }, { passive: false });
 });
 
 // Warm the next same-origin document on deliberate link intent. This keeps
