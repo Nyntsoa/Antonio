@@ -22,7 +22,12 @@ def public_page_cache(view):
 
 @public_page_cache
 def home(request):
-    return render(request, "portfolio_site/home.html")
+    projects = list(
+        Project.objects.filter(status=Project.Status.PUBLISHED)
+        .select_related("category")
+        .order_by("order", "-created_at")
+    )
+    return render(request, "portfolio_site/home.html", {"projects": projects})
 
 @public_page_cache
 def about(request):
