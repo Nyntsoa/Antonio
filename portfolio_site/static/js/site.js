@@ -166,7 +166,7 @@ document.querySelectorAll('[data-work-carousel]').forEach((carousel) => {
 
     if (!dragging && insideViewport && !reducedMotion && !document.hidden &&
         !carousel.matches(':hover') && !carousel.contains(document.activeElement)) {
-      targetOffset += elapsed * 0.009;
+      targetOffset += elapsed * 0.018;
     }
 
     const difference = targetOffset - offset;
