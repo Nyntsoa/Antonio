@@ -19,9 +19,7 @@
 <section class="home-work" id="realisations" aria-labelledby="home-work-title" data-work-showcase>
   <header class="home-work-heading">
     <div class="home-work-copy">
-      <p class="eyebrow">Portfolio · {{ projects|length }} projet{{ projects|length|pluralize:"s" }}</p>
       <h2 id="home-work-title">Mes Réalisations</h2>
-      <p>Des idées transformées en expériences web concrètes.</p>
     </div>
   </header>
 
@@ -29,24 +27,16 @@
     <div class="home-work-track" data-work-track>
       {% for project in projects %}
       {% with project_url=project.live_url|default:project.get_absolute_url %}
-      <article class="home-work-card" data-work-card aria-label="{{ project.title }}">
+      <article class="home-work-card" data-work-card>
         <a class="home-work-art" href="{{ project_url }}"{% if project.live_url %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{% if project.live_url %}Visiter{% else %}Découvrir{% endif %} {{ project.title }}">
           {% if project.cover %}
-            <img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="(max-width: 600px) 78vw, (max-width: 1000px) 42vw, 390px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async">
+            <img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="(max-width: 600px) 68vw, (max-width: 999px) 45vw, 370px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
           {% elif project.demo_image_url %}
-            <img src="{{ project.demo_image_url }}" alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async">
+            <img src="{{ project.demo_image_url }}" alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
           {% else %}
-            <div class="home-work-placeholder" aria-hidden="true"><span>{{ project.title }}</span><small>{{ project.category.name }}</small></div>
+            <span class="home-work-placeholder" aria-hidden="true"></span>
           {% endif %}
-          <span class="home-work-index" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
-          <span class="home-work-image-title" aria-hidden="true">{{ project.title }}</span>
         </a>
-        <div class="home-work-details">
-          <div class="home-work-meta"><span>{{ project.category.name }}</span><span>{{ project.created_at|date:"Y" }}</span></div>
-          <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
-          <p>{{ project.summary }}</p>
-          <a class="home-work-link" href="{{ project.get_absolute_url }}">Voir l’étude <span aria-hidden="true">↗</span></a>
-        </div>
       </article>
       {% endwith %}
       {% endfor %}

@@ -93,7 +93,7 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let cycleWidth = 0;
   let offset = 0;
-  let targetOffset = 0;
+  let wheelRemainder = 0;
   let previousTime = 0;
   let dragging = false;
   let dragStartX = 0;
@@ -101,6 +101,8 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
   let moved = false;
   let suppressClickUntil = 0;
   let resizeFrame = 0;
+  let measuredCards = [];
+  let maxCardWidth = 0;
 
   const normalize = (value) => cycleWidth ? ((value % cycleWidth) + cycleWidth) % cycleWidth : 0;
   const cloneCard = (card) => {
@@ -116,17 +118,35 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
     const visibleOffset = normalize(offset);
     track.style.transform = `translate3d(${-visibleOffset}px, 0, 0)`;
     const width = windowElement.clientWidth || 1;
-    const arcHeight = Math.min(108, Math.max(62, width * 0.12));
+    const arcHeight = Math.min(88, Math.max(46, width * 0.075));
+    const updateFrom = Math.max(0, visibleOffset - maxCardWidth);
+    const updateUntil = visibleOffset + width + maxCardWidth;
+    let low = 0;
+    let high = measuredCards.length;
+    while (low < high) {
+      const middle = (low + high) >> 1;
+      if (measuredCards[middle].left + measuredCards[middle].width < updateFrom) low = middle + 1;
+      else high = middle;
+    }
 
-    Array.from(track.children).forEach((card) => {
-      const cardWidth = card.getBoundingClientRect().width;
-      const center = card.offsetLeft - visibleOffset + cardWidth / 2;
+    for (let index = low; index < measuredCards.length; index += 1) {
+      const { card, left, width: cardWidth } = measuredCards[index];
+      if (left > updateUntil) break;
+      const center = left - visibleOffset + cardWidth / 2;
       const position = Math.max(-1.15, Math.min(1.15, (center / width) * 2 - 1));
-      const insideArc = Math.max(0, 1 - position * position);
-      card.style.setProperty('--work-tilt', `${(position * 12).toFixed(2)}deg`);
+      const insideArc = Math.sqrt(Math.max(0, 1 - position * position));
+      card.style.setProperty('--work-tilt', `${(position * 8).toFixed(2)}deg`);
       card.style.setProperty('--work-lift', `${(-arcHeight * insideArc).toFixed(2)}px`);
       card.style.setProperty('--work-depth', String(Math.round(10 - Math.abs(position) * 5)));
-    });
+    }
+  };
+  const nudgeTrack = (distance) => {
+    if (reducedMotion) {
+      offset += distance;
+      renderArc();
+    } else {
+      wheelRemainder += distance;
+    }
   };
 
   const buildLoop = () => {
@@ -143,13 +163,20 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
     cycleWidth = track.children[cards.length].offsetLeft - cards[0].offsetLeft;
     if (!cycleWidth || !Number.isFinite(cycleWidth)) return;
 
-    const copies = Math.max(2, Math.ceil((windowElement.clientWidth + cycleWidth) / cycleWidth));
+    const cardWidth = cards[0].offsetWidth;
+    const copies = Math.max(2, Math.ceil((windowElement.clientWidth + cycleWidth + cardWidth) / cycleWidth));
     const remainingCopies = document.createDocumentFragment();
     for (let cycle = 2; cycle < copies; cycle += 1) {
       cards.forEach((card) => remainingCopies.append(cloneCard(card)));
     }
     track.append(remainingCopies);
-    offset = targetOffset = progress * cycleWidth;
+    measuredCards = Array.from(track.children, (card) => ({
+      card,
+      left: card.offsetLeft,
+      width: card.offsetWidth,
+    }));
+    maxCardWidth = measuredCards.reduce((largest, item) => Math.max(largest, item.width), 0);
+    offset = progress * cycleWidth;
     renderArc();
   };
 
@@ -167,12 +194,18 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
 
   const frame = (time) => {
     if (!previousTime) previousTime = time;
-    const elapsed = Math.max(0, time - previousTime);
+    const elapsed = time - previousTime;
     previousTime = time;
 
     if (!dragging && !reducedMotion) {
       offset += elapsed * 0.05;
-      targetOffset = offset;
+      if (Math.abs(wheelRemainder) > 0.05) {
+        const consumed = wheelRemainder * (1 - Math.exp(-elapsed / 110));
+        offset += consumed;
+        wheelRemainder -= consumed;
+      } else {
+        wheelRemainder = 0;
+      }
     }
     renderArc();
     if (!reducedMotion) requestAnimationFrame(frame);
@@ -183,18 +216,20 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     dragging = true;
     moved = false;
+    wheelRemainder = 0;
     dragStartX = event.clientX;
     dragStartOffset = offset;
-    targetOffset = offset;
     windowElement.classList.add('is-dragging');
-    windowElement.setPointerCapture?.(event.pointerId);
+    const captureTarget = event.target instanceof Element
+      ? (event.target.closest('.home-work-art') || windowElement)
+      : windowElement;
+    captureTarget.setPointerCapture?.(event.pointerId);
   });
   windowElement.addEventListener('pointermove', (event) => {
     if (!dragging) return;
     const distance = event.clientX - dragStartX;
     if (Math.abs(distance) > 5) moved = true;
     offset = dragStartOffset - distance;
-    targetOffset = offset;
     renderArc();
   });
   const endDrag = () => {
@@ -205,6 +240,7 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
   };
   windowElement.addEventListener('pointerup', endDrag);
   windowElement.addEventListener('pointercancel', endDrag);
+  windowElement.addEventListener('lostpointercapture', endDrag);
   windowElement.addEventListener('click', (event) => {
     if (performance.now() < suppressClickUntil) {
       event.preventDefault();
@@ -215,10 +251,13 @@ document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
     const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
     if (!delta) return;
     event.preventDefault();
-    offset += delta;
-    targetOffset = offset;
-    renderArc();
+    nudgeTrack(delta);
   }, { passive: false });
+  windowElement.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    nudgeTrack(event.key === 'ArrowRight' ? 80 : -80);
+  });
 });
 
 // Warm the next same-origin document on deliberate link intent. This keeps
