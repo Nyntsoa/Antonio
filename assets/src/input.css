@@ -387,9 +387,9 @@ body {
   flex:0 0 auto;
   width:40px !important;
   height:40px !important;
-  border:1px solid var(--line) !important;
-  border-radius:50%;
-  background:var(--card) !important;
+  border:0 !important;
+  border-radius:999px;
+  background:transparent !important;
   box-shadow:none !important;
 }
 .theme-switch { display:grid; }
@@ -1509,7 +1509,7 @@ body:has(.home-work) .site-footer {
 :root:not([data-theme=dark]) body:has(.home-screen) .desktop-nav a { color:rgba(41,38,34,.82); }
 :root:not([data-theme=dark]) body:has(.home-screen) .desktop-nav a:hover { background:var(--accent-soft); color:var(--secondary); }
 :root:not([data-theme=dark]) body:has(.home-screen) .desktop-nav a[aria-current=page] { background:color-mix(in srgb,var(--primary) 12%,white); color:var(--primary-ink); }
-:root:not([data-theme=dark]) body:has(.home-screen) .theme-switch { border-color:rgba(41,38,34,.18) !important; background:rgba(255,255,255,.36) !important; }
+:root:not([data-theme=dark]) body:has(.home-screen) .theme-switch { border:0 !important; background:transparent !important; box-shadow:none !important; }
 :root:not([data-theme=dark]) body:has(.home-screen) .theme-switch-track { border-color:rgba(41,38,34,.16); background:rgba(255,255,255,.56); }
 
 :root[data-theme=dark] body:has(.home-screen) .hero-photo-wrap { background:#090A0D; }
@@ -1530,7 +1530,7 @@ body:has(.home-work) .site-footer {
 :root[data-theme=dark] body:has(.home-screen) .desktop-nav { border-color:rgba(255,255,255,.18) !important; background:rgba(18,19,23,.68); box-shadow:0 9px 30px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.14); }
 :root[data-theme=dark] body:has(.home-screen) .desktop-nav a { color:rgba(244,240,235,.88); }
 :root[data-theme=dark] body:has(.home-screen) .desktop-nav a:hover { background:rgba(255,255,255,.12); color:var(--text); }
-:root[data-theme=dark] body:has(.home-screen) .theme-switch { border-color:rgba(255,255,255,.18) !important; background:rgba(20,21,25,.48) !important; }
+:root[data-theme=dark] body:has(.home-screen) .theme-switch { border:0 !important; background:transparent !important; box-shadow:none !important; }
 :root[data-theme=dark] body:has(.home-screen) .theme-switch-track { border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.1); }
 
 /* Non-photographic profile artwork used in place of the personal portrait. */
@@ -1633,4 +1633,30 @@ body:has(.home-work) .site-footer {
 }
 @media (prefers-reduced-motion:reduce) {
   .home-work-card,.home-work-art>img,.home-work-link span { transition:none !important; }
+}
+
+/* Keep the icon dock centered, unwrapped and above mobile browser safe areas. */
+@media (max-width:999px) {
+  #primary-nav.desktop-nav {
+    position:fixed !important;
+    z-index:1000 !important;
+    top:auto !important;
+    right:auto !important;
+    bottom:calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    left:50% !important;
+    width:max-content !important;
+    max-width:calc(100vw - 20px) !important;
+    flex-wrap:nowrap !important;
+    gap:clamp(1px,.6vw,4px) !important;
+    padding:4px !important;
+    transform:translateX(-50%) !important;
+  }
+  #primary-nav.desktop-nav a {
+    width:44px !important;
+    min-width:44px !important;
+    height:44px !important;
+    min-height:44px !important;
+    flex:0 0 44px !important;
+    touch-action:manipulation;
+  }
 }
