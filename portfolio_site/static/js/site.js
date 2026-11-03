@@ -94,7 +94,6 @@ document.querySelectorAll('[data-work-carousel]').forEach((carousel) => {
   let offset = 0;
   let targetOffset = 0;
   let previousTime = 0;
-  let insideViewport = false;
   let dragging = false;
   let dragStartX = 0;
   let dragStartOffset = 0;
@@ -148,12 +147,6 @@ document.querySelectorAll('[data-work-carousel]').forEach((carousel) => {
     resizeFrame = requestAnimationFrame(buildLoop);
   };
 
-  const observer = 'IntersectionObserver' in window
-    ? new IntersectionObserver(([entry]) => { insideViewport = entry.isIntersecting; }, { threshold: 0 })
-    : null;
-  if (observer) observer.observe(carousel);
-  else insideViewport = true;
-
   const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(scheduleBuild) : null;
   resizeObserver?.observe(windowElement);
   window.addEventListener('resize', scheduleBuild, { passive: true });
@@ -164,9 +157,8 @@ document.querySelectorAll('[data-work-carousel]').forEach((carousel) => {
     const elapsed = Math.min(50, time - previousTime);
     previousTime = time;
 
-    if (!dragging && insideViewport && !reducedMotion && !document.hidden &&
-        !carousel.matches(':hover') && !carousel.contains(document.activeElement)) {
-      targetOffset += elapsed * 0.018;
+    if (!dragging && !reducedMotion) {
+      targetOffset += elapsed * 0.04;
     }
 
     const difference = targetOffset - offset;
