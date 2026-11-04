@@ -10,6 +10,7 @@ DOC_VALIDATOR = FileExtensionValidator(["pdf"])
 DEMO_IMAGE_ASSETS = {
     "tsarakaly": "portfolio_site/images/projects/tsarakaly",
     "mada-market": "portfolio_site/images/projects/mada-market",
+    "gilasy": "portfolio_site/images/projects/gilasy",
 }
 DEMO_IMAGE_WIDTHS = (320, 640, 960, 1440)
 
