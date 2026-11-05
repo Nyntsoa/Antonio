@@ -1,15 +1,14 @@
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.core.paginator import Paginator
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.html import strip_tags
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
 from .forms import ContactForm
 from .models import Category, Project, Service, Skill, SiteProfile
+from .presentation import EXPERIENCES, navigation, skill_groups
 
 def public_page_cache(view):
     """Cache public portfolio pages briefly in browsers and longer at the edge."""
@@ -20,48 +19,69 @@ def public_page_cache(view):
         stale_while_revalidate=3600,
     )(view)
 
-@public_page_cache
-def home(request):
-    projects = list(
-        Project.objects.filter(status=Project.Status.PUBLISHED)
-        .select_related("category")
-        .order_by("order", "-created_at")
-    )
-    return render(request, "portfolio_site/home.html", {"projects": projects})
-
-@public_page_cache
-def about(request):
-    return render(request, "portfolio_site/about.html", {"skills": Skill.objects.filter(active=True)})
-
-@public_page_cache
-def project_list(request):
-    categories = Category.objects.filter(projects__status=Project.Status.PUBLISHED).distinct()
-    selected = request.GET.get("category", "")
+def render_portfolio(request, screen="home", *, form=None, project=None, status=200):
     projects = Project.objects.filter(status=Project.Status.PUBLISHED).select_related("category")
+    selected = request.GET.get("category", "") if screen == "project_list" else ""
     if selected:
         projects = projects.filter(category__slug=selected)
-    page_obj = Paginator(projects, 3).get_page(request.GET.get("page"))
-    return render(request, "portfolio_site/projects.html", {"projects": page_obj.object_list, "page_obj": page_obj, "categories": categories, "selected_category": selected})
+    projects = list(projects)
+    active_project = request.GET.get("project", "")
+    if not any(item.slug == active_project for item in projects):
+        active_project = projects[0].slug if projects else ""
+    context = {
+        "active_screen": screen, "navigation": navigation(),
+        "active_label": next(item['label'] for item in navigation() if item['key'] == screen),
+        "projects": projects, "selected_category": selected, "active_project": active_project,
+        "categories": Category.objects.filter(projects__status=Project.Status.PUBLISHED).distinct(),
+        "skill_groups": skill_groups(Skill.objects.filter(active=True)),
+        "experiences": EXPERIENCES, "form": form if form is not None else ContactForm(),
+        "initial_project": project,
+    }
+    response = render(request, "portfolio_site/desktop.html", context, status=status)
+    # Every screen includes the contact form and its session-specific CSRF token.
+    response["Cache-Control"] = "private, no-cache"
+    return response
 
-@public_page_cache
+
+def home(request):
+    return render_portfolio(request)
+
+def about(request):
+    return render_portfolio(request, "about")
+
+
+def skills(request):
+    return render_portfolio(request, "skills")
+
+
+def experience(request):
+    return render_portfolio(request, "experience")
+
+def project_list(request):
+    return render_portfolio(request, "project_list")
+
 def project_detail(request, slug):
     project = get_object_or_404(Project.objects.select_related("category").prefetch_related("images"), slug=slug, status=Project.Status.PUBLISHED)
-    return render(request, "portfolio_site/project_detail.html", {"project": project})
+    if request.GET.get("fragment") == "1":
+        return render(request, "portfolio_site/includes/project_case.html", {"project": project})
+    return render_portfolio(request, "project_list", project=project)
 
 @public_page_cache
 def services(request):
     return render(request, "portfolio_site/services.html", {"services": Service.objects.filter(active=True)})
 
 def contact(request):
-    form = ContactForm()
-    return render(request, "portfolio_site/contact.html", {"form": form})
+    return render_portfolio(request, "contact")
 
 @require_POST
 def contact_submit(request):
     form = ContactForm(request.POST)
+    wants_json = "application/json" in request.headers.get("Accept", "")
     ip = request.META.get("REMOTE_ADDR", "unknown")
     key = f"contact-rate:{ip}"
     if cache.get(key, 0) >= 5:
+        if wants_json:
+            return JsonResponse({"ok": False, "message": "Trop de tentatives. Merci de réessayer dans une heure."}, status=429)
         messages.error(request, "Trop de tentatives. Merci de réessayer dans une heure.")
         return redirect("contact")
     cache.set(key, cache.get(key, 0) + 1, 3600)
@@ -72,9 +92,13 @@ def contact_submit(request):
         if recipient:
             body = f"De : {message.name} <{message.email}>\n\n{message.message}"
             send_mail(f"Portfolio — {message.subject}", body, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=True)
+        if wants_json:
+            return JsonResponse({"ok": True, "message": "Merci, votre message a bien été envoyé. Je vous répondrai dès que possible."})
         messages.success(request, "Merci, votre message a bien été envoyé. Je vous répondrai dès que possible.")
         return redirect("contact")
-    return render(request, "portfolio_site/contact.html", {"form": form}, status=400)
+    if wants_json:
+        return JsonResponse({"ok": False, "errors": form.errors.get_json_data()}, status=400)
+    return render_portfolio(request, "contact", form=form, status=400)
 
 @public_page_cache
 def legal(request):

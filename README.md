@@ -1,6 +1,6 @@
 # Portfolio d’AMBININTSOA Antonio
 
-Portfolio Django en français, administrable depuis l’interface Django. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et un peu de JavaScript sans dépendance.
+Portfolio Django en français, administrable depuis l’interface Django. Six écrans plein écran (accueil, profil, compétences, projets, parcours, contact), dock en verre et transitions GSAP. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et JavaScript.
 
 ## Prérequis
 
@@ -17,7 +17,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 npm install
-npm run css:build
+npm run build
 python manage.py migrate
 python manage.py load_demo_content
 python manage.py createsuperuser
@@ -39,7 +39,17 @@ npm run css:watch
 
 Les images téléversées depuis l’administration génèrent automatiquement des variantes WebP selon leur taille d’affichage. Pour les médias déjà présents, lancez `python manage.py optimize_images` après la mise à jour du code.
 
-Le CSS compilé est livré dans le dépôt pour démarrer immédiatement. Relancez la compilation après modification des classes Tailwind ou du CSS source.
+Le CSS compilé et GSAP sont livrés dans le dépôt pour démarrer immédiatement sans CDN. `npm run build` copie GSAP depuis la version installée, puis compile le CSS. Relancez la compilation après modification des styles.
+
+## Navigation immersive
+
+Pour prévisualiser ce projet localement avec SQLite, lancez `npm run dev`, puis ouvrez `http://127.0.0.1:8011/`. Cette commande active le mode développement sans modifier `.env`. Pour choisir une autre base uniquement pour cet aperçu, exportez `PORTFOLIO_PREVIEW_DATABASE_URL`.
+
+Les liens du dock changent d’écran sans recharger la page. Les URL directes et le retour du navigateur restent fonctionnels. Les flèches gauche/droite changent d’écran ; dans les commandes des projets elles changent de projet. Échap ferme une étude de cas, puis ramène à l’accueil. Le tactile dispose des mêmes liens et du balayage horizontal. Le défilement du document est bloqué ; les fenêtres longues peuvent défiler localement pour rester accessibles.
+
+Les préférences de réduction des animations sont respectées, avec un bouton supplémentaire en haut de l’écran. Le formulaire utilise une réponse JSON pour l’envoi sans navigation, et un repli HTML sans JavaScript. Sur mobile, il se présente en deux étapes. Sans PDF dans le profil, le lien CV permet d’en faire la demande par e-mail.
+
+La biographie et le parcours fournis par Antonio sont dans les templates `screens/` et `portfolio_site/presentation.py`. Les projets et les compétences restent administrables. Le système visuel et ses choix sont documentés dans [DESIGN.md](DESIGN.md).
 
 ## Administration
 
@@ -58,7 +68,7 @@ python manage.py check --deploy
 python manage.py test
 ```
 
-`check --deploy` signale les paramètres de sécurité qu’il faut activer selon le proxy et le domaine utilisés. Le projet n’inclut pas encore de suite de tests automatisés ; la commande `test` est documentée pour l’ajout futur de tests applicatifs.
+`check --deploy` signale les paramètres de sécurité à adapter au proxy et au domaine. La suite couvre les pages, les brouillons, le sitemap, les liens directs, la confidentialité du cache CSRF, les fiches projet, la validation et les réponses JSON du contact, ainsi que l’anti-spam.
 
 ## Déploiement
 

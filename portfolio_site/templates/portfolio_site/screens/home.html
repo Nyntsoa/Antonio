@@ -1,0 +1,17 @@
+{% load static %}
+<section class="screen home-screen" data-screen="home" aria-labelledby="home-title" {% if active_screen != 'home' %}hidden{% endif %}>
+  <div class="home-copy">
+    <p class="intro-name" data-enter>AMBININTSOA</p>
+    <h1 id="home-title" tabindex="-1" data-enter>Antonio<span>.</span></h1>
+    <p class="hero-profession" data-enter>Développeur web.<br><span>Créatif, par nature.</span></p>
+    <p class="hero-description" data-enter>Du code, des idées et un regard différent.<br> Je crée des expériences web qui ont du sens.</p>
+    <div class="hero-actions" data-enter><a class="button button-primary magnetic" href="{% url 'about' %}" data-route="about">Explorer mon univers {% include 'portfolio_site/includes/icon.html' with icon='arrow-right' %}</a><a class="quiet-link" href="{% url 'project_list' %}" data-route="project_list">Voir mes projets</a></div>
+    <p class="hero-location" data-enter>{% include 'portfolio_site/includes/icon.html' with icon='location' %} {{ site_profile.location|default:'Madagascar' }} <span>·</span> 20 ans, beaucoup d’idées.</p>
+  </div>
+  <div class="hero-art" aria-hidden="true" data-enter>
+    <div class="art-glow"></div><img class="glass-monogram" src="{% static 'portfolio_site/images/antonio-glass.webp' %}" width="1254" height="1254" alt="" fetchpriority="high" decoding="async">
+    <div class="floating-widget widget-code glass"><span class="widget-icon">{% include 'portfolio_site/includes/icon.html' with icon='code' %}</span><div><small>Penser. Créer.</small><strong>Développer.</strong></div></div>
+    <div class="floating-widget widget-design glass"><span class="widget-icon">{% include 'portfolio_site/includes/icon.html' with icon='sparkles' %}</span><div><small>Une autre perspective</small><strong>Design & créativité</strong></div></div>
+    <p class="art-caption">Une idée. Des possibilités.</p>
+  </div>
+</section>

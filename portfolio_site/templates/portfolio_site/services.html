@@ -1,9 +1,1 @@
-{% extends 'portfolio_site/base.html' %}
-{% block title %}Services — {{ site_profile.name|default:'AMBININTSOA Antonio' }}{% endblock %}
-{% block content %}
-<section class="page-section section-shell" aria-labelledby="services-heading">
-  <header class="page-heading"><h1 id="services-heading" data-reveal>Votre idée.<br>Tout pour la créer.</h1><p data-reveal>Conception, développement et évolution de votre présence en ligne.</p><a class="button button-primary" href="{% url 'contact' %}" data-reveal>Présenter mon projet</a></header>
-  <div class="services-list">{% for service in services %}<article class="service-row" data-reveal><h2>{{ service.title }}</h2><div><p>{{ service.description }}</p><a class="text-link" href="{% url 'contact' %}">Parlons de vos besoins <span aria-hidden="true">›</span></a></div></article>{% empty %}<p class="empty-note">Les services seront bientôt présentés ici.</p>{% endfor %}</div>
-  <div class="service-closing" data-reveal><h2>Tout commence<br>par un échange.</h2><p>Votre activité, vos envies, vos contraintes.<br>Prenons le temps de comprendre votre projet.</p><a class="button button-primary" href="{% url 'contact' %}">Parlons ensemble</a></div>
-</section>
-{% endblock %}
+﻿{% extends 'portfolio_site/base.html' %}{% block title %}Services — AMBININTSOA Antonio{% endblock %}{% block content %}<section class="utility-window glass"><header><a class="text-link" href="{% url 'home' %}">← Retour à mon univers</a><p class="section-label">Services</p><h1>De l’idée à la réalisation.</h1></header><div class="utility-content">{% for service in services %}<article><h2>{{ service.title }}</h2><p>{{ service.description }}</p><a class="text-link" href="{% url 'contact' %}">Parlons de votre projet →</a></article>{% empty %}<p>Mes services seront bientôt présentés ici.</p>{% endfor %}</div></section>{% endblock %}

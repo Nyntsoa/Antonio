@@ -2,12 +2,18 @@
   "name": "antonio-portfolio",
   "private": true,
   "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "assets:build": "node scripts/build-assets.mjs",
+    "build": "npm run assets:build && npm run css:build",
     "css:build": "tailwindcss -i ./assets/src/input.css -o ./portfolio_site/static/css/site.css --minify",
     "css:watch": "tailwindcss -i ./assets/src/input.css -o ./portfolio_site/static/css/site.css --watch"
   },
   "devDependencies": {
-    "tailwindcss": "3.4.17",
+    "autoprefixer": "10.4.21",
     "postcss": "8.5.32",
-    "autoprefixer": "10.4.21"
+    "tailwindcss": "3.4.17"
+  },
+  "dependencies": {
+    "gsap": "^3.15.1"
   }
 }

@@ -1,9 +1,0 @@
-{% extends 'portfolio_site/base.html' %}
-{% block title %}À propos — {{ site_profile.name|default:'AMBININTSOA Antonio' }}{% endblock %}
-{% block content %}
-<section class="page-section section-shell" aria-labelledby="about-heading">
-  <header class="page-heading"><h1 id="about-heading" data-reveal>La personne<br>derrière le code.</h1><p data-reveal>{{ site_profile.name|default:'AMBININTSOA Antonio' }}. {{ site_profile.profession|default:'Développeur web' }} — {{ site_profile.location|default:'Madagascar' }}.</p></header>
-  <div class="about-layout"><figure class="portrait" data-reveal>{% include 'portfolio_site/includes/portrait.html' %}</figure><div class="about-copy"><h2 data-reveal>Créer avec attention.</h2><p data-reveal>{{ site_profile.intro|default:'Je conçois des sites web modernes, responsives et fonctionnels, avec une attention particulière portée au design, à l’expérience utilisateur et à la qualité du code.' }}</p>{% if site_profile.journey %}<div data-reveal><h2>Mon parcours</h2><p>{{ site_profile.journey|linebreaksbr }}</p></div>{% endif %}<a class="text-link" href="{% url 'contact' %}" data-reveal>Faisons connaissance <span aria-hidden="true">›</span></a></div></div>
-  <section class="skills-section" aria-labelledby="skills-heading"><div class="section-heading"><h2 id="skills-heading" data-reveal>Les bons outils.<br>Pour chaque idée.</h2>{% if site_profile.cv %}<a class="button button-secondary" href="{{ site_profile.cv.url }}" download>Télécharger mon CV</a>{% endif %}</div><ul class="skills-list">{% for skill in skills %}<li data-reveal>{{ skill.name }}{% if skill.group %}<span>{{ skill.group }}</span>{% endif %}</li>{% empty %}<li>Compétences à découvrir prochainement.</li>{% endfor %}</ul></section>
-</section>
-{% endblock %}

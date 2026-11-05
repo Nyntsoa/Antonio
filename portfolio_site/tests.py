@@ -18,7 +18,7 @@ class PortfolioPagesTests(TestCase):
         )
 
     def test_main_pages_render(self):
-        for name in ("home", "about", "project_list", "services", "contact", "legal"):
+        for name in ("home", "about", "skills", "project_list", "experience", "services", "contact", "legal"):
             with self.subTest(page=name):
                 self.assertEqual(self.client.get(reverse(name)).status_code, 200)
         self.assertEqual(self.client.get(reverse("project_detail", args=[self.published.slug])).status_code, 200)
@@ -61,6 +61,45 @@ class PortfolioPagesTests(TestCase):
             "message": "Message assez long pour satisfaire la validation.", "website": "spam.example",
         })
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(ContactMessage.objects.count(), 0)
+
+    def test_screen_deep_links_are_session_private(self):
+        for name in ("home", "about", "skills", "project_list", "experience", "contact"):
+            with self.subTest(screen=name):
+                response = self.client.get(reverse(name))
+                self.assertContains(response, f'data-active-screen="{name}"')
+                self.assertIn("private", response.headers["Cache-Control"])
+                self.assertContains(response, 'name="csrfmiddlewaretoken"')
+
+    def test_project_fragments_exclude_drafts(self):
+        response = self.client.get(self.published.get_absolute_url(), {"fragment": "1"})
+        self.assertContains(response, 'class="project-case"')
+        self.assertNotContains(response, '<html')
+        self.assertEqual(self.client.get(self.draft.get_absolute_url(), {"fragment": "1"}).status_code, 404)
+
+    def test_contact_json_validation_and_delivery(self):
+        url = reverse("contact_submit")
+        response = self.client.post(url, {"name": "Test"}, HTTP_ACCEPT="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.json()["errors"])
+        self.assertEqual(ContactMessage.objects.count(), 0)
+        response = self.client.post(url, {
+            "name": "Samira", "email": "samira@example.com", "subject": "Projet web",
+            "message": "Bonjour, je souhaite discuter de mon prochain projet web.",
+        }, HTTP_ACCEPT="application/json")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["ok"])
+        self.assertEqual(ContactMessage.objects.count(), 1)
+
+    def test_contact_json_rate_limit_and_honeypot(self):
+        url = reverse("contact_submit")
+        response = self.client.post(url, {"website": "spam.example"}, HTTP_ACCEPT="application/json")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("website", response.json()["errors"])
+        cache.set("contact-rate:127.0.0.1", 5, 60)
+        response = self.client.post(url, {}, HTTP_ACCEPT="application/json")
+        self.assertEqual(response.status_code, 429)
+        self.assertFalse(response.json()["ok"])
         self.assertEqual(ContactMessage.objects.count(), 0)
 
     def tearDown(self):
