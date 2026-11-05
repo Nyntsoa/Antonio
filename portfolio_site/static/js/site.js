@@ -1,293 +1,127 @@
-const toggle = document.querySelector('.menu-toggle');
-const nav = document.querySelector('#primary-nav');
-if (toggle && nav) {
-  const closeMenu = (restoreFocus = false) => {
-    toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Ouvrir le menu');
-    nav.classList.remove('is-open');
-    if (restoreFocus) toggle.focus();
-  };
-  toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    toggle.setAttribute('aria-label', open ? 'Ouvrir le menu' : 'Fermer le menu');
-    nav.classList.toggle('is-open', !open);
-  });
-  nav.addEventListener('click', event => {
-    if (event.target.closest('a')) closeMenu();
-  });
-  document.addEventListener('click', event => {
-    if (!event.target.closest('#primary-nav, .menu-toggle')) closeMenu();
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') closeMenu(true);
-  });
-}
-
-const themeToggle = document.querySelector('#theme-toggle');
-const root = document.documentElement;
-const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-
-function syncThemeToggle(enabled) {
-  themeToggle?.setAttribute('aria-checked', String(enabled));
-}
-
-if (themeToggle) syncThemeToggle(root.dataset.theme === 'dark');
-
-themeToggle?.addEventListener('click', () => {
-  const dark = root.dataset.theme !== 'dark';
-  if (dark) root.dataset.theme = 'dark';
-  else delete root.dataset.theme;
-  themeColorMeta?.setAttribute('content', dark ? '#171417' : '#F4FFF9');
-  syncThemeToggle(dark);
-  try { localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light'); } catch (_) {}
-});
-
-const motionAllowed = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-if (motionAllowed) {
-  const intro = document.querySelector('.home-copy, .screen-heading, .contact-copy, .about-intro, .detail-heading');
-  if (intro) {
-    intro.classList.add('hero-enter');
-    window.setTimeout(() => intro.classList.remove('hero-enter'), 1150);
+﻿(() => {
+  const root = document.documentElement;
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('#primary-nav');
+  if (toggle && nav) {
+    const closeMenu = (restoreFocus = false) => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Ouvrir le menu');
+      nav.classList.remove('is-open');
+      if (restoreFocus) toggle.focus();
+    };
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+      nav.classList.toggle('is-open', open);
+    });
+    nav.addEventListener('click', event => {
+      if (event.target.closest('a')) closeMenu();
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.site-header')) closeMenu();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') closeMenu(true);
+    });
+    document.addEventListener('focusin', event => {
+      if (!event.target.closest('.site-header')) closeMenu();
+    });
+    window.matchMedia('(max-width: 760px)').addEventListener('change', () => closeMenu());
+    root.classList.add('nav-enhanced');
   }
 
-  if ('IntersectionObserver' in window) {
-    root.classList.add('motion-ready');
-    const revealSelector = [
-      '.hero-stats', '.section-title', '.skills-card', '.explore-card', '.project-card',
-      '.service-card', '.about-panel', '.contact-form', '.filter-panel', '.detail-cover', '.project-facts',
-      '.detail-gallery figure', '.contact-strip', '.home-contact', '.legal-card', '.not-found'
-    ].join(',');
-    const revealObserver = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
+  const themeToggle = document.querySelector('#theme-toggle');
+  const syncTheme = () => {
+    const dark = root.dataset.theme === 'dark';
+    themeToggle?.setAttribute('aria-checked', String(dark));
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#101113' : '#ffffff');
+  };
+  syncTheme();
+  themeToggle?.addEventListener('click', () => {
+    const dark = root.dataset.theme !== 'dark';
+    if (dark) root.dataset.theme = 'dark';
+    else delete root.dataset.theme;
+    syncTheme();
+    try { localStorage.setItem('portfolio-theme', dark ? 'dark' : 'light'); } catch (_) {}
+  });
+  window.addEventListener('storage', event => {
+    if (event.key !== 'portfolio-theme') return;
+    if (event.newValue === 'dark') root.dataset.theme = 'dark';
+    else delete root.dataset.theme;
+    syncTheme();
+  });
+
+  document.querySelectorAll('[data-project-preview]').forEach(preview => {
+    const slides = [...preview.querySelectorAll('[data-preview-slide]')];
+    const buttons = [...preview.querySelectorAll('[data-preview-select]')];
+    const controls = preview.querySelector('[data-preview-controls]');
+    const address = preview.querySelector('[data-preview-address]');
+    if (!slides.length || !controls) return;
+    const select = index => {
+      slides.forEach((slide, position) => { slide.hidden = position !== index; });
+      buttons.forEach((button, position) => button.setAttribute('aria-pressed', String(position === index)));
+      if (address) address.textContent = slides[index].dataset.title;
+    };
+    buttons.forEach((button, index) => {
+      button.addEventListener('click', () => select(index));
+      button.addEventListener('keydown', event => {
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % buttons.length;
+        if (event.key === 'ArrowLeft') next = (index - 1 + buttons.length) % buttons.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = buttons.length - 1;
+        if (next === undefined) return;
+        event.preventDefault();
+        select(next);
+        buttons[next].focus();
+      });
+    });
+    preview.classList.add('preview-enhanced');
+    select(0);
+    controls.hidden = buttons.length < 2;
+  });
+
+  // The content stays visible without JavaScript or if an observer never fires.
+  if (!motion.matches && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
         const element = entry.target;
-        element.classList.add('is-visible');
-        revealObserver.unobserve(element);
-        window.setTimeout(() => element.classList.remove('motion-reveal', 'motion-image', 'is-visible'), 1100);
-      }
-    }, { rootMargin: '0px', threshold: 0.01 });
-
-    document.querySelectorAll(revealSelector).forEach((element, index) => {
-      if (element.getBoundingClientRect().top <= window.innerHeight * 0.9) return;
-      element.classList.add('motion-reveal');
-      if (element.matches('.explore-card, .project-card, .service-card, .about-panel, .detail-cover, .detail-gallery figure, .legal-card')) {
-        element.classList.add('motion-image');
-      }
-      const siblingIndex = Array.from(element.parentElement?.children || []).indexOf(element);
-      element.style.setProperty('--motion-delay', `${Math.min(siblingIndex < 0 ? index : siblingIndex, 3) * 70}ms`);
-      revealObserver.observe(element);
-    });
-
+        if (!motion.matches) {
+          element.classList.add('is-revealing');
+          element.addEventListener('animationend', () => element.classList.remove('is-revealing'), { once: true });
+        }
+        observer.unobserve(element);
+      });
+    }, { threshold: .08 });
+    document.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
   }
-}
 
-// Move the project line at a steady speed while bending visible cards into an arc.
-document.querySelectorAll('[data-work-showcase]').forEach((showcase) => {
-  const windowElement = showcase.querySelector('[data-work-window]');
-  const track = showcase.querySelector('[data-work-track]');
-  if (!windowElement || !track) return;
-
-  const cards = Array.from(track.querySelectorAll('[data-work-card]'));
-  if (!cards.length) return;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let cycleWidth = 0;
-  let offset = 0;
-  let wheelRemainder = 0;
-  let previousTime = 0;
-  let dragging = false;
-  let dragStartX = 0;
-  let dragStartOffset = 0;
-  let moved = false;
-  let suppressClickUntil = 0;
-  let resizeFrame = 0;
-  let measuredCards = [];
-  let maxCardWidth = 0;
-
-  const normalize = (value) => cycleWidth ? ((value % cycleWidth) + cycleWidth) % cycleWidth : 0;
-  const cloneCard = (card) => {
-    const clone = card.cloneNode(true);
-    clone.classList.add('home-work-clone');
-    clone.setAttribute('aria-hidden', 'true');
-    clone.setAttribute('inert', '');
-    return clone;
-  };
-
-  const renderArc = () => {
-    if (!cycleWidth) return;
-    const visibleOffset = normalize(offset);
-    track.style.transform = `translate3d(${-visibleOffset}px, 0, 0)`;
-    const width = windowElement.clientWidth || 1;
-    const arcHeight = Math.min(88, Math.max(46, width * 0.075));
-    const updateFrom = Math.max(0, visibleOffset - maxCardWidth);
-    const updateUntil = visibleOffset + width + maxCardWidth;
-    let low = 0;
-    let high = measuredCards.length;
-    while (low < high) {
-      const middle = (low + high) >> 1;
-      if (measuredCards[middle].left + measuredCards[middle].width < updateFrom) low = middle + 1;
-      else high = middle;
-    }
-
-    for (let index = low; index < measuredCards.length; index += 1) {
-      const { card, left, width: cardWidth } = measuredCards[index];
-      if (left > updateUntil) break;
-      const center = left - visibleOffset + cardWidth / 2;
-      const position = Math.max(-1.15, Math.min(1.15, (center / width) * 2 - 1));
-      const insideArc = Math.sqrt(Math.max(0, 1 - position * position));
-      card.style.setProperty('--work-tilt', `${(position * 8).toFixed(2)}deg`);
-      card.style.setProperty('--work-lift', `${(-arcHeight * insideArc).toFixed(2)}px`);
-      card.style.setProperty('--work-depth', String(Math.round(10 - Math.abs(position) * 5)));
-    }
-  };
-  const nudgeTrack = (distance) => {
-    if (reducedMotion) {
-      offset += distance;
-      renderArc();
-    } else {
-      wheelRemainder += distance;
-    }
-  };
-
-  const buildLoop = () => {
-    const progress = cycleWidth ? normalize(offset) / cycleWidth : 0;
-    track.replaceChildren(...cards);
-    cards.forEach((card, index) => {
-      card.setAttribute('aria-roledescription', 'diapositive');
-      card.setAttribute('aria-label', `${card.querySelector('h3')?.textContent.trim() || 'Projet'}, ${index + 1} sur ${cards.length}`);
+  const form = document.querySelector('.contact-form');
+  if (form) {
+    const submit = form.querySelector('button[type="submit"]');
+    const resetSubmit = () => {
+      if (!submit) return;
+      submit.disabled = false;
+      submit.textContent = 'Envoyer mon message';
+      form.removeAttribute('aria-busy');
+    };
+    form.querySelectorAll('.field-error').forEach(error => {
+      const field = error.closest('.form-field')?.querySelector('input, textarea');
+      if (!field) return;
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute('aria-describedby', [field.getAttribute('aria-describedby'), error.id].filter(Boolean).join(' '));
     });
-
-    const firstCopy = document.createDocumentFragment();
-    cards.forEach((card) => firstCopy.append(cloneCard(card)));
-    track.append(firstCopy);
-    cycleWidth = track.children[cards.length].offsetLeft - cards[0].offsetLeft;
-    if (!cycleWidth || !Number.isFinite(cycleWidth)) return;
-
-    const cardWidth = cards[0].offsetWidth;
-    const copies = Math.max(2, Math.ceil((windowElement.clientWidth + cycleWidth + cardWidth) / cycleWidth));
-    const remainingCopies = document.createDocumentFragment();
-    for (let cycle = 2; cycle < copies; cycle += 1) {
-      cards.forEach((card) => remainingCopies.append(cloneCard(card)));
-    }
-    track.append(remainingCopies);
-    measuredCards = Array.from(track.children, (card) => ({
-      card,
-      left: card.offsetLeft,
-      width: card.offsetWidth,
-    }));
-    maxCardWidth = measuredCards.reduce((largest, item) => Math.max(largest, item.width), 0);
-    offset = progress * cycleWidth;
-    renderArc();
-  };
-
-  const scheduleBuild = () => {
-    cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(buildLoop);
-  };
-  const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(scheduleBuild) : null;
-  if (resizeObserver) {
-    resizeObserver.observe(windowElement);
-    showcase._workResizeObserver = resizeObserver;
+    form.querySelector('.form-error-summary')?.focus();
+    form.addEventListener('submit', () => {
+      if (!submit) return;
+      submit.disabled = true;
+      submit.textContent = 'Envoi en cours…';
+      form.setAttribute('aria-busy', 'true');
+      window.setTimeout(resetSubmit, 15000);
+    });
+    window.addEventListener('pageshow', resetSubmit);
   }
-  window.addEventListener('resize', scheduleBuild, { passive: true });
-  buildLoop();
-
-  const frame = (time) => {
-    if (!previousTime) previousTime = time;
-    const elapsed = time - previousTime;
-    previousTime = time;
-
-    if (!dragging && !reducedMotion) {
-      offset += elapsed * 0.05;
-      if (Math.abs(wheelRemainder) > 0.05) {
-        const consumed = wheelRemainder * (1 - Math.exp(-elapsed / 110));
-        offset += consumed;
-        wheelRemainder -= consumed;
-      } else {
-        wheelRemainder = 0;
-      }
-    }
-    renderArc();
-    if (!reducedMotion) requestAnimationFrame(frame);
-  };
-  if (!reducedMotion) requestAnimationFrame(frame);
-
-  windowElement.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    dragging = true;
-    moved = false;
-    wheelRemainder = 0;
-    dragStartX = event.clientX;
-    dragStartOffset = offset;
-    windowElement.classList.add('is-dragging');
-    const captureTarget = event.target instanceof Element
-      ? (event.target.closest('.home-work-art') || windowElement)
-      : windowElement;
-    captureTarget.setPointerCapture?.(event.pointerId);
-  });
-  windowElement.addEventListener('pointermove', (event) => {
-    if (!dragging) return;
-    const distance = event.clientX - dragStartX;
-    if (Math.abs(distance) > 5) moved = true;
-    offset = dragStartOffset - distance;
-    renderArc();
-  });
-  const endDrag = () => {
-    if (!dragging) return;
-    dragging = false;
-    windowElement.classList.remove('is-dragging');
-    if (moved) suppressClickUntil = performance.now() + 250;
-  };
-  windowElement.addEventListener('pointerup', endDrag);
-  windowElement.addEventListener('pointercancel', endDrag);
-  windowElement.addEventListener('lostpointercapture', endDrag);
-  windowElement.addEventListener('click', (event) => {
-    if (performance.now() < suppressClickUntil) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  }, true);
-  windowElement.addEventListener('wheel', (event) => {
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
-    if (!delta) return;
-    event.preventDefault();
-    nudgeTrack(delta);
-  }, { passive: false });
-  windowElement.addEventListener('keydown', (event) => {
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    event.preventDefault();
-    nudgeTrack(event.key === 'ArrowRight' ? 80 : -80);
-  });
-});
-
-// Warm the next same-origin document on deliberate link intent. This keeps
-// normal browser navigation and form behaviour while hiding server latency.
-const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-const canWarmPages = !connection?.saveData && !['slow-2g', '2g'].includes(connection?.effectiveType);
-const warmedPages = new Set();
-
-function warmPageFrom(target, delay = 80) {
-  if (!canWarmPages) return;
-  const anchor = target instanceof Element ? target.closest('a[href]') : null;
-  if (!anchor || (anchor.target && anchor.target !== '_self') || anchor.hasAttribute('download')) return;
-  if (anchor.relList.contains('external') || anchor.relList.contains('nofollow') || anchor.dataset.noPrefetch !== undefined) return;
-
-  const url = new URL(anchor.href, window.location.href);
-  if (url.origin !== window.location.origin || url.pathname.startsWith('/admin/')) return;
-  if (url.pathname === window.location.pathname && url.search === window.location.search) return;
-  if (warmedPages.has(url.href)) return;
-  warmedPages.add(url.href);
-
-  window.setTimeout(() => {
-    const hint = document.createElement('link');
-    hint.rel = 'prefetch';
-    hint.as = 'document';
-    hint.href = url.href;
-    document.head.append(hint);
-  }, delay);
-}
-
-document.addEventListener('pointerover', (event) => {
-  if (event.pointerType === 'mouse') warmPageFrom(event.target);
-});
-document.addEventListener('focusin', (event) => warmPageFrom(event.target));
+})();

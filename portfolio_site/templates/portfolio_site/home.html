@@ -1,47 +1,41 @@
 {% extends 'portfolio_site/base.html' %}
 {% block content %}
-<section class="home-screen" aria-labelledby="hero-title">
-  <div class="home-copy">
-    <p class="eyebrow">Portfolio · {{ site_profile.location|default:'Madagascar' }}</p>
-    <h1 id="hero-title">{{ site_profile.name|default:'AMBININTSOA Antonio' }}</h1>
-    <p class="hero-role">{{ site_profile.profession|default:'Développeur web' }}</p>
-    <p class="hero-intro">{{ site_profile.intro|default:'Je conçois des sites web modernes, responsives et fonctionnels, avec le souci d’une expérience claire et d’un code soigné.' }}</p>
-    <ul class="hero-tech" aria-label="Technologies principales"><li>Django</li><li>React</li><li>PostgreSQL</li></ul>
-    <div class="hero-actions"><a class="button button-primary" href="{% url 'project_list' %}">Voir mes réalisations <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="{% url 'contact' %}">Me contacter</a></div>
+<section class="hero section-shell" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <h1 id="hero-title" data-reveal>Le web, pensé<br>avec soin.</h1>
+    <p class="hero-description" data-reveal>{{ site_profile.name|default:'AMBININTSOA Antonio' }}. {{ site_profile.profession|default:'Développeur web' }}.<br>Je transforme vos idées en expériences qui comptent.</p>
+    <div class="hero-actions" data-reveal><a class="button button-primary" href="{% url 'project_list' %}">Découvrir mes projets</a><a class="text-link" href="{% url 'contact' %}">Parlons de votre projet <span aria-hidden="true">›</span></a></div>
   </div>
-  <figure class="hero-photo-wrap hero-photo-wrap--abstract" aria-hidden="true">
-    <span class="hero-abstract-orbit hero-abstract-orbit--outer"></span>
-    <span class="hero-abstract-orbit hero-abstract-orbit--inner"></span>
-    <span class="hero-abstract-core"></span>
-  </figure>
-</section>
-{% if projects %}
-<section class="home-work" id="realisations" aria-labelledby="home-work-title" data-work-showcase>
-  <header class="home-work-heading">
-    <div class="home-work-copy">
-      <h2 id="home-work-title">Mes Réalisations</h2>
-    </div>
-  </header>
-
-  <div class="home-work-gallery" data-work-window tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Mes réalisations, défilement en boucle">
-    <div class="home-work-track" data-work-track>
-      {% for project in projects %}
-      {% with project_url=project.live_url|default:project.get_absolute_url %}
-      <article class="home-work-card" data-work-card>
-        <a class="home-work-art" href="{{ project_url }}"{% if project.live_url %} target="_blank" rel="noopener noreferrer"{% endif %} aria-label="{% if project.live_url %}Visiter{% else %}Découvrir{% endif %} {{ project.title }}">
-          {% if project.cover %}
-            <img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="(max-width: 600px) 68vw, (max-width: 999px) 45vw, 370px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
-          {% elif project.demo_image_url %}
-            <img src="{{ project.demo_image_url }}"{% if project.demo_image_srcset %} srcset="{{ project.demo_image_srcset }}" sizes="(max-width: 600px) 68vw, (max-width: 999px) 45vw, 370px"{% endif %} alt="Aperçu du projet {{ project.title }}" width="900" height="1100" loading="lazy" decoding="async" draggable="false">
-          {% else %}
-            <span class="home-work-placeholder" aria-hidden="true"></span>
-          {% endif %}
-        </a>
-      </article>
-      {% endwith %}
+  {% if projects %}
+  <div class="project-preview" data-project-preview data-reveal>
+    <div class="browser-window" data-ui>
+      <div class="browser-toolbar" aria-hidden="true"><div class="browser-dots"><i></i><i></i><i></i></div><span class="browser-address" data-preview-address>{{ projects.0.title }}</span><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 4v16"/></svg></div>
+      {% for project in projects|slice:':3' %}
+      <a class="preview-slide" id="preview-{{ forloop.counter }}" data-preview-slide data-title="{{ project.title }}" href="{{ project.get_absolute_url }}" aria-label="Découvrir le projet {{ project.title }}">
+        {% include 'portfolio_site/includes/project_image.html' with image_loading='eager' image_sizes='(max-width: 700px) 92vw, (max-width: 1200px) 88vw, 1060px' %}
+      </a>
       {% endfor %}
     </div>
+    <div class="preview-selector" data-preview-controls hidden aria-label="Choisir un aperçu de projet">{% for project in projects|slice:':3' %}<button type="button" data-preview-select="{{ forloop.counter0 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="preview-{{ forloop.counter }}">{{ project.title }}</button>{% endfor %}</div>
+  </div>
+  {% endif %}
+</section>
+{% if projects %}
+<section class="work-section" aria-labelledby="work-title">
+  <div class="section-shell">
+    <header class="section-heading"><div><h2 id="work-title" data-reveal>Le souci du détail.<br>Dans chaque projet.</h2><p data-reveal>Des idées devenues des sites à explorer.</p></div><a class="text-link" href="{% url 'project_list' %}" data-reveal>Toutes les réalisations <span aria-hidden="true">›</span></a></header>
+    <div class="work-grid">{% for project in projects|slice:':3' %}
+      <article class="work-card{% if forloop.first %} work-card-featured{% endif %}" data-reveal>
+        <div class="work-card-copy"><p class="project-category">{{ project.category.name }}{% if project.demo_label %} — {{ project.demo_label }}{% endif %}</p><h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3><p>{{ project.summary }}</p><a class="text-link" href="{{ project.get_absolute_url }}">Découvrir le projet <span aria-hidden="true">›</span></a></div>
+        <a class="work-card-image" href="{{ project.get_absolute_url }}" tabindex="-1" aria-hidden="true">{% include 'portfolio_site/includes/project_image.html' with image_sizes='(max-width: 700px) 85vw, 50vw' %}</a>
+      </article>
+    {% endfor %}</div>
   </div>
 </section>
 {% endif %}
+<section class="home-about section-shell" aria-labelledby="home-about-title">
+  <figure class="portrait" data-reveal>{% include 'portfolio_site/includes/portrait.html' %}</figure>
+  <div class="home-about-copy"><h2 id="home-about-title" data-reveal>Derrière l’écran,<br>Antonio.</h2><p data-reveal>{{ site_profile.intro|default:'Développeur web à Madagascar, je conçois des sites utiles, avec une attention particulière au design, à l’expérience utilisateur et à la qualité du code.'|truncatewords:40 }}</p><a class="text-link" href="{% url 'about' %}" data-reveal>Un peu plus sur moi <span aria-hidden="true">›</span></a></div>
+</section>
+<section class="contact-band" aria-labelledby="home-contact-title"><div class="section-shell"><h2 id="home-contact-title" data-reveal>Votre prochaine<br>belle idée.</h2><p data-reveal>Donnons-lui une place sur le web.</p><a class="button button-primary" href="{% url 'contact' %}" data-reveal>Parlons ensemble</a></div></section>
 {% endblock %}

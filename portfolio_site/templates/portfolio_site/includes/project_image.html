@@ -1,0 +1,5 @@
+{% if project.cover %}
+<img src="{{ project.cover.url }}"{% if project.cover_srcset %} srcset="{{ project.cover_srcset }}" sizes="{{ image_sizes|default:'(max-width: 700px) 92vw, 80vw' }}"{% endif %} alt="Aperçu du site {{ project.title }}" width="1440" height="1000" loading="{{ image_loading|default:'lazy' }}" decoding="async">
+{% elif project.demo_image_url %}
+<img src="{{ project.demo_image_url }}"{% if project.demo_image_srcset %} srcset="{{ project.demo_image_srcset }}" sizes="{{ image_sizes|default:'(max-width: 700px) 92vw, 80vw' }}"{% endif %} alt="Aperçu du projet {{ project.title }}{% if project.demo_label %} — {{ project.demo_label }}{% endif %}" width="1440" height="1000" loading="{{ image_loading|default:'lazy' }}" decoding="async">
+{% else %}<div class="project-no-image"><span>{{ project.title }}</span><span>{{ project.category.name }}</span></div>{% endif %}

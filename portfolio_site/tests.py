@@ -5,7 +5,9 @@ from .models import Category, ContactMessage, Project
 
 class PortfolioPagesTests(TestCase):
     def setUp(self):
-        self.category = Category.objects.create(name="Site vitrine", slug="site-vitrine")
+        self.category, _ = Category.objects.get_or_create(
+            slug="site-vitrine", defaults={"name": "Site vitrine"},
+        )
         self.published = Project.objects.create(
             title="Projet publié", slug="projet-publie", category=self.category,
             summary="Un exemple publié.", status=Project.Status.PUBLISHED,

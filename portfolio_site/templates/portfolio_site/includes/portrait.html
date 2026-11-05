@@ -1,0 +1,3 @@
+{% load static %}{% if site_profile.photo %}
+<img src="{{ site_profile.photo.url }}"{% if site_profile.photo_srcset %} srcset="{{ site_profile.photo_srcset }}" sizes="(max-width: 700px) 90vw, 40vw"{% endif %} alt="Portrait de {{ site_profile.name }}" width="960" height="720" loading="lazy" decoding="async">
+{% else %}<img src="{% static 'portfolio_site/images/portrait-640.webp' %}" srcset="{% static 'portfolio_site/images/portrait-320.webp' %} 320w, {% static 'portfolio_site/images/portrait-640.webp' %} 640w, {% static 'portfolio_site/images/portrait-960.webp' %} 960w" sizes="(max-width: 700px) 90vw, 40vw" alt="Portrait d’Antonio" width="960" height="720" loading="lazy" decoding="async">{% endif %}
