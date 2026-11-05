@@ -4,7 +4,7 @@ Le brief fourni le 5 novembre 2026 remplace la première piste claire et les pre
 
 ## Système
 
-Fond #080A12, surfaces #10182B, texte #FFFFFF / #DCE4F2, bleu #386BFF, cyan #42E8FF, violet #865DFF et lavande #C5B7FF. Verre dépoli réservé au dock, aux fenêtres et aux widgets. Typographie système native, grands titres et navigation discrète. Le monogramme a en verre relie le nom d’Antonio à l’objet central de son univers.
+Fond #080A12, surfaces #10182B, texte #FFFFFF / #DCE4F2, bleu #386BFF, cyan #42E8FF, violet #865DFF et lavande #C5B7FF. Verre dépoli réservé au dock, aux fenêtres et aux widgets. Typographie système native, grands titres et navigation discrète. Le portrait photographique d’Antonio accompagne son nom à l’accueil. La signature de navigation reste typographique.
 
 ## Architecture
 
@@ -14,7 +14,7 @@ Les compétences viennent de l’administration. Les technologies complémentair
 
 ## Image
 
-Monogramme créé avec l’outil imagegen intégré. Prompt : sculpture abstraite de la lettre a, verre optique et titane poli, reflets cyan, bleu et violet, fond midnight noir uniforme, sans texte, interface ni logo tiers. Fichier livré : `portfolio_site/static/portfolio_site/images/antonio-glass.webp`. Les autres visuels sont les images et le portrait déjà présents dans le projet.
+Le visuel généré a été retiré à la demande d’Antonio, ainsi que les étoiles décoratives, le pictogramme de marque et les badges flottants. L’accueil utilise sa photographie existante. Le contrôle des animations utilise les symboles lecture / pause. Les autres images sont celles des projets.
 
 ## Navigation et accessibilité
 
@@ -26,7 +26,7 @@ Les six écrans ont été inspectés dans Chrome à 1440 × 900, 768 × 1024, 39
 
 Navigation, historique, interruption des transitions, carrousel, ouverture et fermeture des fiches, sélection des compétences et du parcours, réduction des animations et repli sans JavaScript vérifiés dans le navigateur. Les derniers ajustements du formulaire ont passé les 35 contrôles ciblés. La suite Django passe ses 11 tests ; la compilation CSS et la copie locale de GSAP réussissent. Aucun message réel envoyé lors des vérifications navigateur.
 
-### Critique finale du rendu
+### Critique de la refonte initiale (avant retrait du monogramme)
 
 ROUND 3
 

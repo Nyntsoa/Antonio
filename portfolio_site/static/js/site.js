@@ -18,7 +18,6 @@
   const siteTitle = 'AMBININTSOA Antonio · Développeur web';
   let active = stack?.dataset.activeScreen || '';
   let transition;
-  let floating;
   let projectTransition;
   let lastProjectLink;
   let projectRequest;
@@ -45,9 +44,7 @@
     if (reduced()) {
       transition?.progress(1);
       projectTransition?.progress(1);
-      floating?.pause(0);
-      if (gsap) gsap.set('.hero-art', { clearProps: 'transform' });
-    } else if (active === 'home' && !document.hidden) floating?.play();
+    }
   }
   document.querySelector('.motion-toggle')?.addEventListener('click', () => {
     userPaused = !userPaused;
@@ -74,8 +71,6 @@
     if (counter) counter.textContent = String(Math.max(0, order.indexOf(key)) + 1).padStart(2, '0');
     document.title = key === 'home' ? siteTitle : `${labels[key] || 'Portfolio'} — ${siteTitle}`;
     if (announcement) announcement.textContent = labels[key] || '';
-    if (active === 'home' && !reduced() && !document.hidden) floating?.play();
-    else floating?.pause();
   }
 
   function navigate(key, { mode = 'push', focus = true, animate = true } = {}) {
@@ -447,21 +442,7 @@
     } catch (_) { toast(`Adresse e-mail : ${email}`); }
   });
 
-  if (gsap && document.querySelector('.glass-monogram')) {
-    floating = gsap.timeline({ repeat: -1, yoyo: true, paused: true });
-    floating.to('.glass-monogram', { y: 12, rotation: 2, duration: 5, ease: 'sine.inOut' }, 0)
-      .to('.widget-code', { y: -8, duration: 5, ease: 'sine.inOut' }, 0)
-      .to('.widget-design', { y: 8, duration: 5, ease: 'sine.inOut' }, 0);
-    const art = document.querySelector('.hero-art');
-    const xTo = gsap.quickTo(art, 'x', { duration: .7, ease: 'power3.out' });
-    const yTo = gsap.quickTo(art, 'y', { duration: .7, ease: 'power3.out' });
-    document.querySelector('.home-screen')?.addEventListener('pointermove', event => {
-      if (reduced() || mobileQuery.matches || event.pointerType !== 'mouse') return;
-      const bounds = event.currentTarget.getBoundingClientRect();
-      xTo(((event.clientX - bounds.left) / bounds.width - .5) * 14);
-      yTo(((event.clientY - bounds.top) / bounds.height - .5) * 12);
-    });
-    document.querySelector('.home-screen')?.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
+  if (gsap) {
     document.querySelectorAll('.magnetic').forEach(button => {
       const moveX = gsap.quickTo(button, 'x', { duration: .3, ease: 'power3.out' });
       const moveY = gsap.quickTo(button, 'y', { duration: .3, ease: 'power3.out' });
@@ -476,8 +457,7 @@
   }
   document.addEventListener('visibilitychange', () => {
     root.classList.toggle('is-background', document.hidden);
-    if (document.hidden) floating?.pause();
-    else syncMotion();
+    if (!document.hidden) syncMotion();
   });
 
   if (stack) {

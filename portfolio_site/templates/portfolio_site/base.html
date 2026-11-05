@@ -1,4 +1,4 @@
-﻿{% load static %}<!doctype html>
+{% load static %}<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
@@ -21,9 +21,9 @@
   <div class="ambient" aria-hidden="true"><div class="ambient-light ambient-light-one"></div><div class="ambient-light ambient-light-two"></div><div class="ambient-light ambient-light-three"></div></div>
   <div class="particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <header class="system-header">
-    <a class="brand" href="{% url 'home' %}" data-route="home" aria-label="Antonio — Accueil"><span class="brand-mark">a.</span><span>antonio<span class="brand-dot">.</span></span></a>
+    <a class="brand" href="{% url 'home' %}" data-route="home" aria-label="Antonio — Accueil"><span>antonio<span class="brand-dot">.</span></span></a>
     <div class="header-label"><span class="status-light" aria-hidden="true"></span>Portfolio personnel</div>
-    <div class="system-controls"><button class="icon-button motion-toggle" type="button" aria-label="Réduire les animations" aria-pressed="false" title="Réduire les animations">{% include 'portfolio_site/includes/icon.html' with icon='sparkles' %}</button><a class="header-contact" href="{% url 'contact' %}" data-route="contact">Parlons ensemble {% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</a></div>
+    <div class="system-controls"><button class="icon-button motion-toggle" type="button" aria-label="Réduire les animations" aria-pressed="false" title="Réduire les animations">{% include 'portfolio_site/includes/icon.html' with icon='motion' %}</button><a class="header-contact" href="{% url 'contact' %}" data-route="contact">Parlons ensemble {% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</a></div>
   </header>
   <main id="main" class="desktop" tabindex="-1">{% block content %}{% endblock %}</main>
   <div class="system-bottom"><a href="{% url 'legal' %}">© {% now 'Y' %} Antonio <span>· Mentions légales</span></a><p class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> pour explorer</p><p class="screen-position"><span data-screen-number>01</span><span class="position-divider">/</span>06</p></div>
