@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{% if initial_project %}{{ initial_project.seo_title|default:initial_project.title }} — {% elif active_label and active_screen != 'home' %}{{ active_label }} — {% endif %}{{ site_profile.name|default:'AMBININTSOA Antonio' }} · Développeur web{% endblock %}</title>
   <meta name="description" content="{% block description %}{% if initial_project %}{{ initial_project.seo_description|default:initial_project.summary }}{% else %}{{ site_profile.seo_description|default:'L’univers d’AMBININTSOA Antonio, développeur web, étudiant à l’ESTI Antanimena et créatif. Découvrez mes projets, mes compétences et mon parcours.' }}{% endif %}{% endblock %}">
-  <meta name="theme-color" content="#080A12">
+  <meta name="theme-color" content="#090909">
   <meta property="og:type" content="website"><meta property="og:locale" content="fr_FR">
   <meta property="og:title" content="{{ site_profile.name|default:'AMBININTSOA Antonio' }} · Développeur web">
   <meta property="og:description" content="{{ site_profile.seo_description|default:'Développement, créativité et nouvelles perspectives. Entrez dans mon univers.' }}">
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23080A12'/%3E%3Ctext x='50%25' y='72%25' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='32' fill='%2342E8FF'%3Ea%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23090909'/%3E%3Ctext x='50%25' y='72%25' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='32' fill='%23F4F4F4'%3Ea%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
   <noscript><style>[data-about-panel],[data-skill-panel],[data-experience-panel]{display:block!important;margin-bottom:30px}.segmented-control,.skill-navigation,.timeline-steps,.motion-toggle{display:none!important}.screen{overflow-y:auto}.about-window,.skills-window,.timeline-window{flex-shrink:0}</style></noscript>
   <script src="{% static 'js/vendor/gsap.min.js' %}" defer></script>

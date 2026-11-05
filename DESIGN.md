@@ -4,7 +4,9 @@ Le brief fourni le 5 novembre 2026 remplace la première piste claire et les pre
 
 ## Système
 
-Fond #080A12, surfaces #10182B, texte #FFFFFF / #DCE4F2, bleu #386BFF, cyan #42E8FF, violet #865DFF et lavande #C5B7FF. Verre dépoli réservé au dock, aux fenêtres et aux widgets. Typographie système native, grands titres et navigation discrète. Le portrait photographique d’Antonio accompagne son nom à l’accueil. La signature de navigation reste typographique.
+Palette monochrome : noir charbon #090909, surfaces #161616, blanc doux #F4F4F4, texte secondaire #D6D6D6 et gris #A3A3A3. Boutons principaux #EDEDED avec texte #111111. Les panneaux, le dock, les bordures, les survols et les états du formulaire emploient uniquement des gris neutres. Les erreurs restent identifiables par leur texte et leur bordure. La photographie et les captures sont affichées en niveaux de gris par CSS ; les fichiers originaux sont conservés.
+
+Verre dépoli réservé au dock et aux fenêtres. Typographie système native, grands titres et navigation discrète. Le portrait photographique d’Antonio accompagne son nom à l’accueil. La signature de navigation reste typographique.
 
 ## Architecture
 
