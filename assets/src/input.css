@@ -744,30 +744,6 @@ kbd {
   font-size:12px;
 }
 
-.window-dots {
-  display:inline-flex;
-  gap:6px;
-}
-
-.window-dots i {
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#cad9f03d;
-}
-
-.window-dots i:first-child {
-  background:#dd7884;
-}
-
-.window-dots i:nth-child(2) {
-  background:#cfb575;
-}
-
-.window-dots i:nth-child(3) {
-  background:#77b09a;
-}
-
 .about-composition {
   flex:1;
   min-height:0;
@@ -2225,13 +2201,6 @@ kbd {
     height:29px;
     padding-inline:10px;
     font-size:9px;
-  }
-  .window-dots {
-    gap:4px;
-  }
-  .window-dots i {
-    width:6px;
-    height:6px;
   }
   .project-visual>img {
     object-fit:cover;

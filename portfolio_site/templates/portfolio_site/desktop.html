@@ -9,7 +9,7 @@
   {% include 'portfolio_site/screens/contact.html' %}
 </div>
 <dialog class="project-dialog glass" id="project-dialog" aria-label="Détails du projet" {% if initial_project %}open{% endif %}>
-  <div class="dialog-toolbar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Projet / Étude de cas</span><a class="icon-button" href="{% url 'project_list' %}" data-close-dialog aria-label="Fermer le projet">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</a></div>
+  <div class="dialog-toolbar"><span>Projet / Étude de cas</span><a class="icon-button" href="{% url 'project_list' %}" data-close-dialog aria-label="Fermer le projet">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</a></div>
   <div class="dialog-content" data-project-content>{% if initial_project %}{% include 'portfolio_site/includes/project_case.html' with project=initial_project %}{% endif %}</div>
 </dialog>
 {% endblock %}
