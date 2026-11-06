@@ -57,3 +57,44 @@ def skill_groups(skills):
     for index in (3, 4):
         groups[index]['names'] = list(dict.fromkeys(groups[index]['names'] + SKILL_GROUPS[index]['names']))
     return groups
+
+
+# Visual studies requested to complete the reference layout. These are presented
+# as concepts, separately from the published projects managed in Django admin.
+PORTFOLIO_CONCEPTS = [
+    {'key': 'mora', 'title': 'Mora', 'category': 'Art de vivre', 'kind': 'editorial', 'headline': 'Le temps de vivre.', 'caption': 'Une maison, une histoire.', 'description': 'Concept de site éditorial pour une maison d’hôtes imaginaire. Une étude de typographie, de rythme et de composition.'},
+    {'key': 'rivo', 'title': 'Rivo', 'category': 'Architecture', 'kind': 'architecture', 'headline': 'Habiter autrement.', 'caption': 'Architecture & espaces.', 'description': 'Concept de portfolio pour un atelier d’architecture fictif, avec une composition structurée autour de la lumière et des volumes.'},
+    {'key': 'cadrage', 'title': 'Cadrage', 'category': 'Photographie', 'kind': 'photo', 'headline': 'Voir. Autrement.', 'caption': 'Un regard sur les détails.', 'description': 'Maquette exploratoire d’un portfolio de photographie. Ce concept illustre une direction graphique, sans commande client.'},
+    {'key': 'nocturne', 'title': 'Nocturne', 'category': 'Musique', 'kind': 'music', 'headline': 'Le son prend forme.', 'caption': 'Une autre fréquence.', 'description': 'Concept visuel d’une plateforme musicale fictive, entre formes circulaires, contraste et typographie.'},
+]
+
+VISUAL_STUDIES = [
+    {'key': 'orbite', 'title': 'Orbite', 'category': 'Volume & lumière', 'kind': 'orb'},
+    {'key': 'ruban', 'title': 'Ruban', 'category': 'Matière', 'kind': 'ribbon'},
+    {'key': 'echo', 'title': 'Écho', 'category': 'Ondes', 'kind': 'rings'},
+    {'key': 'monolithe', 'title': 'Monolithe', 'category': 'Architecture', 'kind': 'monolith'},
+    {'key': 'horizon', 'title': 'Horizon', 'category': 'Paysage abstrait', 'kind': 'horizon'},
+    {'key': 'prisme', 'title': 'Prisme', 'category': 'Géométrie', 'kind': 'prism'},
+    {'key': 'sillage', 'title': 'Sillage', 'category': 'Mouvement', 'kind': 'waves'},
+    {'key': 'eclipse', 'title': 'Éclipse', 'category': 'Ombre & lumière', 'kind': 'eclipse'},
+]
+
+INTERFACE_STUDIES = [
+    {'key': 'index', 'title': 'Index', 'category': 'Navigation', 'kind': 'menu'},
+    {'key': 'focus', 'title': 'Focus', 'category': 'Galerie', 'kind': 'gallery'},
+    {'key': 'signal', 'title': 'Signal', 'category': 'Tableau de bord', 'kind': 'dashboard'},
+    {'key': 'folio', 'title': 'Folio', 'category': 'Éditorial', 'kind': 'editorial'},
+    {'key': 'atelier', 'title': 'Atelier', 'category': 'Commerce', 'kind': 'commerce'},
+    {'key': 'passage', 'title': 'Passage', 'category': 'Transition', 'kind': 'transition'},
+    {'key': 'chapitre', 'title': 'Chapitre', 'category': 'Typographie', 'kind': 'type'},
+    {'key': 'accord', 'title': 'Accord', 'category': 'Composants', 'kind': 'components'},
+]
+
+PORTFOLIO_FAQ = [
+    {'question': 'Qui se cache derrière ce portfolio ?', 'answer': 'Je suis AMBININTSOA Antonio, développeur web de 20 ans, étudiant en L2 à l’ESTI Antanimena et en alternance chez Befiana Platform.'},
+    {'question': 'Quels projets sont déjà en ligne ?', 'answer': 'Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada sont accessibles depuis leurs fiches. Le bouton « Visiter le site » ouvre la réalisation correspondante.'},
+    {'question': 'Que signifie la mention « Concept » ?', 'answer': 'Ce sont des propositions graphiques fictives et des expérimentations créées pour explorer une idée. Elles ne correspondent pas à des missions ou à des clients réels.'},
+    {'question': 'Pourquoi certaines cases sont-elles vides ?', 'answer': 'Elles réservent une place aux prochains projets, aux futures séries photo et aux nouvelles explorations.'},
+    {'question': 'Comment discuter d’un projet ?', 'answer': 'Vous pouvez utiliser le formulaire de contact ou m’écrire directement par e-mail. Présentez votre idée, vos besoins et le calendrier envisagé.'},
+    {'question': 'Où trouver votre CV ?', 'answer': 'Le bouton de la section À propos permet de télécharger mon CV lorsqu’il est disponible, ou de me le demander par e-mail.'},
+]

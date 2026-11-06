@@ -1,66 +1,41 @@
-# Antonio — refonte inspirée de Layers
+# Antonio — composition Layers
 
-## Direction du 6 novembre 2026
+## Référence et intention
 
-Référence explicitement demandée : https://www.getlayers.ai/?via=ig3, inspectée dans Chrome sur ordinateur et téléphone. Cette demande remplace la précédente architecture de six écrans sans défilement et le dock inférieur. La référence détermine la direction ; aucun tirage aléatoire de style n’a été ajouté.
+La demande du 6 novembre 2026 est de reprendre le design de https://www.getlayers.ai/?via=ig3 avec la même densité, en ajoutant des cases vides et du contenu fictif lorsque nécessaire. La page de référence a été examinée dans Chrome et son HTML consulté directement.
 
-Le portfolio reprend le fond presque noir, la barre supérieure en capsules, le hero gris argenté avec grain, les titres légers, les boutons à flèche circulaire, les grandes vignettes et les surfaces arrondies de Layers. Le noir et blanc demandé auparavant reste présent sur les photographies et les interfaces. Aucun logo ou contenu de marque de Layers, aucune étoile IA ni pastille tricolore.
+La composition reprend la navigation en capsules accompagnée d’une recherche, le hero argenté avec grain, les titres fins General Sans, les grilles de quatre colonnes, les légendes sous les visuels, les rangées finales estompées et leurs boutons, les blocs de compétences, le sommaire fixe de la démarche, la FAQ et le grand pied de page. Les grilles passent à deux colonnes sur téléphone.
 
-## Contenu et composition
+Le noir et blanc des demandes précédentes est conservé. Les marques IA et les pastilles tricolores restent absentes. Les assets, le code métier et les textes de Layers ne sont pas intégrés au portfolio.
 
-L’idée : les sites réalisés par Antonio deviennent une collection d’interfaces à parcourir, avec leur aperçu en premier et leurs informations en dessous.
+## Collections et contenu
 
-- Accueil : Antonio, développeur web, et un lien direct vers les réalisations.
-- Projets : Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada, grandes captures sur deux colonnes puis une sur téléphone ; filtrage par catégorie, détails et liens externes.
-- À propos : portrait réel, 20 ans, L2 à l’ESTI Antanimena, alternance chez Befiana Platform, intérêt pour le développement et la photographie.
-- Compétences : données administrables et outils attestés par les projets existants, sans scores inventés.
-- Parcours : formation et alternance, sans dates fictives.
-- Contact : adresse, réseaux, formulaire et demande de CV si aucun PDF n’est disponible.
+Cinq collections de douze cases : projets, explorations visuelles, matières, interfaces et photographie. Avec les quatre projets actuellement publiés, cela représente 60 cases : quatre réalisations en ligne, un portrait réel, 28 concepts ou études graphiques et 27 emplacements vides.
 
-Les captures des quatre sites et le portrait existaient dans le projet. Aucun visuel de remplacement, image générée ou témoignage fictif. Aucun clip n’a été ajouté : aucune vidéo propre à Antonio n’était disponible, et les aperçus des sites portent la démonstration.
+Les réalisations réelles restent Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada. Leurs fiches montrent une grande capture en haut, puis leurs informations et leur lien externe. Les nouvelles propositions fictives Mora, Rivo, Cadrage et Nocturne sont étiquetées « Concept ». Les études de forme, de matière et d’interface disposent aussi de leur propre aperçu. Elles ne sont pas présentées comme des missions clients.
 
-## Système visuel
+Les cases « À venir » sont volontaires, conformément à la demande. Les illustrations de concepts sont composées en HTML/CSS ; aucune photographie de client ou réalisation externe n’est utilisée pour les représenter.
 
-Fond #080808, surfaces #121212 / #1B1B1B, texte principal #EEEEEE, secondaire #A7A7A7, argent #D5D5D5. Titres 300, corps 400, nom 750. Police Onest variable auto-hébergée, distribuée sous SIL Open Font License ; fichiers et licence dans `portfolio_site/static/portfolio_site/fonts/`. Source : https://github.com/google/fonts/tree/main/ofl/onest.
+Les données des concepts, études et FAQ se trouvent dans `portfolio_site/presentation.py`. Aucun ajout fictif à la table des projets, aucune migration et aucun faux résultat professionnel. Le parcours personnel fourni par Antonio est conservé.
 
-Les gradients neutres, bordures, capsules, petits cartouches et tailles de titre proches de 48 px sont intentionnels : ils reprennent la référence choisie par Antonio. Ils dérogent aux préférences génériques de design-taste-frontend. Le lint stylistique les signale encore ; ce ne sont pas des erreurs de compilation. L’inspection a été exécutée avec ces exceptions explicites (`eyebrow,gradient,button-fx,outlined-box,shadow,focal-point,pill-nav,hairline`).
+## Typographie et palette
 
-## Interactions et accessibilité
+General Sans pour les titres et boutons, via l’API officielle Fontshare : https://www.fontshare.com/fonts/general-sans. Onest auto-hébergée pour le texte et comme repli ; sa licence SIL OFL accompagne les fichiers dans `portfolio_site/static/portfolio_site/fonts/`.
 
-Défilement vers les sections, menu mobile, lien d’évitement, états de focus, historique du navigateur et accès direct aux fiches. Fenêtre native `dialog` avec focus, fermeture Échap et bouton, récupération des détails avec état d’attente et repli en cas d’échec. Les projets restent accessibles sans JavaScript. Filtres avec `aria-pressed` et annonce du nombre de résultats.
+Fond #080808, surfaces #121212 et #1B1B1B, texte #EEEEEE, secondaire #A7A7A7. Reflets, gradients, grain et illustrations restent monochromes. Les images existantes sont affichées en niveaux de gris, leurs originaux étant conservés.
 
-Apparition progressive des sections via GSAP, déplacement subtil de lumière, zoom léger des aperçus et du portrait. Les préférences système et le bouton en pied de page réduisent les animations. Les contenus restent visibles si JavaScript échoue.
+## Interactions
 
-Le formulaire conserve CSRF, validation serveur, limitation de fréquence et champ piège. Il expose les erreurs aux lecteurs d’écran, empêche les doubles envois, conserve les champs en cas de panne réseau et se réinitialise après confirmation du serveur.
+- Recherche insensible aux accents, projets et concepts ouvrables depuis les résultats, raccourci `/`, état sans résultat.
+- Collections déployables et réduction des collections, avec état `aria-expanded`.
+- Fenêtres natives pour les projets et les concepts, focus et fermeture Échap.
+- Démarche avec navigation fixe sur ordinateur, onglets compacts sur téléphone, flèches du clavier et Home/End.
+- FAQ native, menu mobile, navigation par section, liens directs et historique.
+- Formulaire Django existant : CSRF, validation serveur, limitation de fréquence, erreurs accessibles et conservation des champs en cas de panne réseau.
+- Animations GSAP et préférences de réduction des animations. Les réalisations réelles et le formulaire restent accessibles sans JavaScript.
 
 ## Vérification
 
-- Build des assets et du CSS réussi ; syntaxe JavaScript valide.
-- 11 tests Django réussis : routes, brouillons, catégories, sitemap, cache privé, fragments, formulaire HTML/JSON, validation et limitation.
-- 51 contrôles navigateur réussis à 1440 × 900, 768 × 1024, 390 × 844 et 320 × 568 : débordement, images, police, titres, filtres, fiches, Échap, menu, URL directe, réduction des animations, erreurs/succès simulés du formulaire et repli sans JavaScript. Aucun e-mail réel envoyé par ces contrôles.
-- Inspection du CSS compilé : 0 FAIL, 3 WARN avec les exceptions de la référence. Les avertissements restants concernent la variété des tailles, l’absence de vidéo et un faux positif « nom seul » alors que le titre dit « développeur web ».
-- Toutes les planches de l’inspection finale ont été ouvertes et examinées. Scripts, captures et rapports locaux dans `.taste-skill/layers-reference/`, `.taste-skill/layers-review/` et `.taste-skill/layers-qa/`.
+Compilation CSS et assets réussie, syntaxe JavaScript et vérification Django sans erreur. Les 11 tests Django existants passent. Les contrôles navigateur couvrent 1440 × 900, 768 × 1024, 390 × 844 et 320 × 568, les grilles, les emplacements, la recherche, les fenêtres, Échap, les collections, les étapes, le menu, la FAQ et le repli sans JavaScript.
 
-## Critique visuelle
-
-ROUND 2
-
-Seen in one second: Antonio, développeur web, dans un hero argenté avec accès immédiat à ses projets.
-
-Idea (one sentence): les réalisations réelles d’Antonio forment une collection d’interfaces dans la composition sombre de Layers.
-
-Live thing: filtrer les réalisations et ouvrir leurs grandes fiches, puis les sites réels.
-
-Layout words by section: hero=centré / projets=grands aperçus en grille / profil=portrait et récit / compétences=surfaces en grille / parcours=deux expériences / contact=invitation puis coordonnées et formulaire / footer=signature typographique.
-
-Scores: design 8 · usability 8 · creativity 7 · content 8 → overall 7.8.
-
-Caps applied: créativité plafonnée à 7, puisque la direction reproduit volontairement une référence. Les capsules, bordures et gradients viennent du choix explicite de l’utilisateur.
-
-Top three problems (most visible first), each with the screenshot it shows in and the fix:
-
-1. Premier rendu mobile : « web. » isolé sur une ligne ; corrigé en séparant Antonio et son métier sur deux lignes.
-2. Premier rendu des fiches et du pied de page : légendes trop petites ; texte secondaire remonté à 13 px, descriptions à 16 px, signature du footer éclaircie.
-3. Premier rendu mobile : les filtres repoussaient inutilement les images ; « Tous » remplace le libellé long et le compteur redondant est masqué sur téléphone.
-
-Limites restantes : le design suit intentionnellement Layers et n’est donc pas une direction originale ; les images des projets sont des captures statiques. Aucun déploiement distant réalisé pour cette refonte.
+Les captures de la référence et du rendu ainsi que les scripts de contrôle sont stockés dans le dossier temporaire de la session, hors du dépôt. Aucun outil de design supprimé n’a été réinstallé dans le projet. Aucun déploiement distant n’a été effectué.

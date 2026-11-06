@@ -7,5 +7,4 @@ venv/
 node_modules/
 staticfiles/
 media/
-.taste-skill/
 *.log

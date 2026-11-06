@@ -8,7 +8,10 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
 from .forms import ContactForm
 from .models import Category, Project, Service, Skill, SiteProfile
-from .presentation import EXPERIENCES, navigation, skill_groups
+from .presentation import (
+    EXPERIENCES, INTERFACE_STUDIES, PORTFOLIO_CONCEPTS, PORTFOLIO_FAQ,
+    VISUAL_STUDIES, navigation, skill_groups,
+)
 
 def public_page_cache(view):
     """Cache public portfolio pages briefly in browsers and longer at the edge."""
@@ -36,6 +39,10 @@ def render_portfolio(request, screen="home", *, form=None, project=None, status=
         "skill_groups": skill_groups(Skill.objects.filter(active=True)),
         "experiences": EXPERIENCES, "form": form if form is not None else ContactForm(),
         "initial_project": project,
+        "portfolio_concepts": PORTFOLIO_CONCEPTS, "visual_studies": VISUAL_STUDIES,
+        "interface_studies": INTERFACE_STUDIES, "portfolio_faq": PORTFOLIO_FAQ,
+        "empty_project_slots": range(max(0, 12 - len(projects) - len(PORTFOLIO_CONCEPTS))),
+        "empty_study_slots": range(4), "empty_photo_slots": range(11),
     }
     response = render(request, "portfolio_site/desktop.html", context, status=status)
     # Every screen includes the contact form and its session-specific CSRF token.

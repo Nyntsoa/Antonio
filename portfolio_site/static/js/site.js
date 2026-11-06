@@ -28,6 +28,115 @@
   motionQuery.addEventListener('change', syncMotion);
   syncMotion();
 
+  const searchDialog = document.getElementById('portfolio-search');
+  const searchInput = document.getElementById('portfolio-query');
+  const searchResults = [...document.querySelectorAll('[data-search-result]')];
+  const normalized = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
+  function filterSearch() {
+    const query = normalized(searchInput?.value || '').trim();
+    let count = 0;
+    searchResults.forEach(result => {
+      result.hidden = !normalized(result.textContent).includes(query);
+      if (!result.hidden) count++;
+    });
+    const status = document.querySelector('[data-search-status]');
+    if (status) status.textContent = count ? `${count} résultat${count > 1 ? 's' : ''}` : 'Aucun résultat. Essayez un autre mot.';
+  }
+  function closeSearch() {
+    if (searchDialog?.open) searchDialog.close();
+  }
+  function openSearch() {
+    if (!searchDialog || document.querySelector('dialog:modal')) return;
+    closeMenu();
+    searchDialog.showModal();
+    document.body.classList.add('modal-open');
+    searchInput.value = '';
+    filterSearch();
+    searchInput.focus();
+  }
+  document.querySelectorAll('[data-open-search]').forEach(button => button.addEventListener('click', openSearch));
+  document.querySelector('[data-close-search]')?.addEventListener('click', closeSearch);
+  searchInput?.addEventListener('input', filterSearch);
+  searchInput?.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); searchResults.find(result => !result.hidden)?.focus(); }
+  });
+  searchDialog?.addEventListener('close', () => {
+    if (!document.querySelector('dialog:modal')) document.body.classList.remove('modal-open');
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || event.target.closest('input,textarea,select,[contenteditable=true]')) return;
+    event.preventDefault(); openSearch();
+  });
+
+  document.querySelectorAll('[data-collection]').forEach(collection => {
+    const controls = collection.querySelectorAll('[data-expand-collection]');
+    controls.forEach(control => control.addEventListener('click', () => {
+      const expanded = !collection.classList.contains('is-expanded');
+      collection.classList.toggle('is-expanded', expanded);
+      controls.forEach(button => {
+        button.setAttribute('aria-expanded', String(expanded));
+        if (button.dataset.collapsedLabel) button.textContent = expanded ? button.dataset.expandedLabel : button.dataset.collapsedLabel;
+      });
+    }));
+  });
+
+  const conceptDialog = document.getElementById('concept-dialog');
+  const conceptContent = document.querySelector('[data-concept-content]');
+  document.querySelectorAll('[data-concept]').forEach(button => button.addEventListener('click', () => {
+    const template = document.getElementById(`concept-${button.dataset.concept}`);
+    if (!conceptDialog || !template) return;
+    closeSearch();
+    conceptContent.replaceChildren(template.content.cloneNode(true));
+    conceptDialog.showModal();
+    conceptDialog.scrollTop = 0;
+    document.body.classList.add('modal-open');
+  }));
+  document.querySelector('[data-close-concept]')?.addEventListener('click', () => conceptDialog.close());
+  conceptDialog?.addEventListener('close', () => {
+    if (!document.querySelector('dialog:modal')) document.body.classList.remove('modal-open');
+    conceptContent.replaceChildren();
+  });
+  [searchDialog, conceptDialog].filter(Boolean).forEach(modal => modal.addEventListener('click', event => {
+    if (event.target !== modal) return;
+    const box = modal.getBoundingClientRect();
+    if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) modal.close();
+  }));
+
+  const methodTabs = [...document.querySelectorAll('[data-method]')];
+  const methodPanels = [...document.querySelectorAll('.method-panel')];
+  const narrowMethod = matchMedia('(max-width: 760px)');
+  let selectedMethod = 'understand';
+  function selectMethod(key, { scroll = false, focus = false } = {}) {
+    selectedMethod = key;
+    methodTabs.forEach(tab => {
+      const active = tab.dataset.method === key;
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+      if (active && focus) tab.focus({ preventScroll: true });
+    });
+    methodPanels.forEach(panel => { panel.hidden = narrowMethod.matches && panel.id !== `method-${key}`; });
+    if (scroll && !narrowMethod.matches) document.getElementById(`method-${key}`)?.scrollIntoView({ behavior: reduced() ? 'instant' : 'smooth', block: 'center' });
+  }
+  methodTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => selectMethod(tab.dataset.method, { scroll: true }));
+    tab.addEventListener('keydown', event => {
+      if (!['ArrowDown','ArrowUp','ArrowRight','ArrowLeft','Home','End'].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? methodTabs.length - 1 : (index + (['ArrowDown','ArrowRight'].includes(event.key) ? 1 : -1) + methodTabs.length) % methodTabs.length;
+      selectMethod(methodTabs[next].dataset.method, { scroll: true, focus: true });
+    });
+  });
+  narrowMethod.addEventListener('change', () => selectMethod(selectedMethod));
+  if (methodTabs.length) selectMethod(selectedMethod);
+  if ('IntersectionObserver' in window) {
+    const methodObserver = new IntersectionObserver(entries => {
+      if (narrowMethod.matches) return;
+      const visible = entries.find(entry => entry.isIntersecting);
+      if (visible) selectMethod(visible.target.id.replace('method-', ''));
+    }, { rootMargin: '-30% 0px -35% 0px' });
+    methodPanels.forEach(panel => methodObserver.observe(panel));
+  }
+
   const menu = document.querySelector('.main-navigation');
   const menuToggle = document.querySelector('.menu-toggle');
   function closeMenu() {
@@ -65,6 +174,7 @@
       const key = link.dataset.section;
       if (!document.getElementById(key)) return;
       event.preventDefault();
+      closeSearch();
       closeMenu();
       history.pushState({ section: key }, '', link.href);
       scrollToSection(key, { focus: true });
@@ -179,6 +289,7 @@
   document.querySelectorAll('[data-project-link]').forEach(link => link.addEventListener('click', event => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0 || !dialog) return;
     event.preventDefault();
+    closeSearch();
     openProject(link.href, { trigger: link });
   }));
   dialog?.querySelector('[data-close-dialog]').addEventListener('click', event => { event.preventDefault(); closeDialog(); });
@@ -189,6 +300,8 @@
     if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) closeDialog();
   });
   window.addEventListener('popstate', event => {
+    closeSearch();
+    if (conceptDialog?.open) conceptDialog.close();
     if (event.state?.project) { dialogPushed = true; openProject(event.state.project, { push: false }); }
     else { dialogPushed = false; resetDialog(); scrollToSection(event.state?.section || location.hash.slice(1) || 'home', { instant: true }); }
   });
