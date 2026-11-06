@@ -1,15 +1,15 @@
 {% extends 'portfolio_site/base.html' %}
 {% block content %}
-<div class="screen-stack" data-active-screen="{{ active_screen }}">
+<div class="portfolio-page" data-active-screen="{{ active_screen }}">
   {% include 'portfolio_site/screens/home.html' %}
+  {% include 'portfolio_site/screens/projects.html' %}
   {% include 'portfolio_site/screens/about.html' %}
   {% include 'portfolio_site/screens/skills.html' %}
-  {% include 'portfolio_site/screens/projects.html' %}
   {% include 'portfolio_site/screens/experience.html' %}
   {% include 'portfolio_site/screens/contact.html' %}
 </div>
-<dialog class="project-dialog glass" id="project-dialog" aria-label="Détails du projet" {% if initial_project %}open{% endif %}>
-  <div class="dialog-toolbar"><span>Projet / Étude de cas</span><a class="icon-button" href="{% url 'project_list' %}" data-close-dialog aria-label="Fermer le projet">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</a></div>
+<dialog class="project-dialog" id="project-dialog" aria-label="Détails du projet" {% if initial_project %}open{% endif %}>
+  <div class="dialog-toolbar"><span>Dans les détails</span><a class="icon-button" href="{% url 'project_list' %}#project_list" data-close-dialog aria-label="Fermer le projet">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</a></div>
   <div class="dialog-content" data-project-content>{% if initial_project %}{% include 'portfolio_site/includes/project_case.html' with project=initial_project %}{% endif %}</div>
 </dialog>
 {% endblock %}

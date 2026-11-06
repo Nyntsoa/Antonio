@@ -1,15 +1,7 @@
-<section class="screen about-screen" data-screen="about" aria-labelledby="about-title" {% if active_screen != 'about' %}hidden{% endif %}>
-  <header class="screen-heading"><div><p class="section-label" data-enter>À propos</p><h1 id="about-title" tabindex="-1" data-enter>La curiosité comme moteur.</h1></div><span class="screen-subtitle" data-enter>Le code. La créativité. Et tout le reste.</span></header>
-  <div class="about-composition">
-    <figure class="about-portrait glass" data-enter>{% include 'portfolio_site/includes/portrait.html' %}<figcaption><strong>Antonio, 20 ans.</strong><span>{{ site_profile.location|default:'Madagascar' }}</span></figcaption></figure>
-    <div class="about-window glass" data-enter>
-      <div class="window-bar"><span>Un peu plus personnel</span></div>
-      <div class="about-window-content">
-        <div class="segmented-control" aria-label="À propos d’Antonio"><button type="button" data-about-tab="profile" aria-pressed="true">Mon profil</button><button type="button" data-about-tab="passions" aria-pressed="false">Ce qui m’anime</button></div>
-        <div data-about-panel="profile"><h2>J’aime faire grandir<br> les idées.</h2><p>Je suis développeur web, étudiant en L2 à l’ESTI Antanimena et en alternance chez Befiana Platform.</p><p>J’aime le développement, autant personnel que dans les choses que je crée. Chaque projet est une occasion d’apprendre, de progresser et d’apporter ma touche.</p><a class="text-link" href="{% url 'experience' %}" data-route="experience">Découvrir mon parcours {% include 'portfolio_site/includes/icon.html' with icon='arrow-right' %}</a></div>
-        <div data-about-panel="passions" hidden><h2>Un regard qui<br> cherche toujours.</h2><p>Créatif et passionné par la photographie, j’aime observer, imaginer et donner une forme aux idées.</p><p>Dans le code comme derrière l’objectif, j’aime les détails qui changent la façon de voir les choses.</p><div class="personal-tags"><span>Curiosité</span><span>Créativité</span><span>Envie de progresser</span></div></div>
-      </div>
-    </div>
-    <div class="about-widgets"><div class="mini-widget glass" data-enter>{% include 'portfolio_site/includes/icon.html' with icon='code' %}<strong>Développement</strong><span>Transformer l’idée en réalité.</span></div><div class="mini-widget glass" data-enter>{% include 'portfolio_site/includes/icon.html' with icon='camera' %}<strong>Photographie</strong><span>Voir les choses autrement.</span></div></div>
+<section class="section about-section" id="about" aria-labelledby="about-title">
+  <header class="section-heading" data-reveal><div><p class="eyebrow">Derrière les projets</p><h2 id="about-title">Curieux par nature.</h2></div><span class="section-aside">Développement · Créativité · Photographie</span></header>
+  <div class="about-grid">
+    <figure class="portrait-panel" data-reveal>{% include 'portfolio_site/includes/portrait.html' %}<figcaption><span>AMBININTSOA Antonio</span><span>Madagascar</span></figcaption></figure>
+    <div class="about-story feature-panel" data-reveal><div class="about-intro"><span class="eyebrow">20 ans, et l’envie de construire</span><h3>Apprendre. Créer. Évoluer.</h3><p>Je suis Antonio, développeur web et étudiant en L2 à l’ESTI Antanimena. En alternance chez Befiana Platform, je transforme ce que j’apprends en projets concrets.</p><p>J’aime le développement sous toutes ses formes : celui des sites que je construis, mais aussi ma propre progression. La créativité et la photographie nourrissent mon regard.</p></div><div class="about-bottom"><span>Un peu de code.<br>Beaucoup de curiosité.</span>{% if site_profile.cv %}<a class="button" href="{{ site_profile.cv.url }}" download>Mon CV {% include 'portfolio_site/includes/icon.html' with icon='download' %}</a>{% elif site_profile.email %}<a class="button" href="mailto:{{ site_profile.email }}?subject=Demande%20de%20CV">Demander mon CV {% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</a>{% endif %}</div></div>
   </div>
 </section>

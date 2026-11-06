@@ -1,13 +1,9 @@
-<section class="screen home-screen" data-screen="home" aria-labelledby="home-title" {% if active_screen != 'home' %}hidden{% endif %}>
-  <div class="home-copy">
-    <p class="intro-name" data-enter>AMBININTSOA</p>
-    <h1 id="home-title" tabindex="-1" data-enter>Antonio<span>.</span></h1>
-    <p class="hero-profession" data-enter>Développeur web.<br><span>Créatif, par nature.</span></p>
-    <p class="hero-description" data-enter>Du code, des idées et un regard différent.<br> Je crée des expériences web qui ont du sens.</p>
-    <div class="hero-actions" data-enter><a class="button button-primary magnetic" href="{% url 'about' %}" data-route="about">Explorer mon univers {% include 'portfolio_site/includes/icon.html' with icon='arrow-right' %}</a><a class="quiet-link" href="{% url 'project_list' %}" data-route="project_list">Voir mes projets</a></div>
-    <p class="hero-location" data-enter>{% include 'portfolio_site/includes/icon.html' with icon='location' %} {{ site_profile.location|default:'Madagascar' }} <span>·</span> 20 ans, beaucoup d’idées.</p>
+<section class="hero silver-panel" id="home" aria-labelledby="home-title">
+  <div class="hero-light" aria-hidden="true"></div>
+  <div class="hero-content">
+    <p class="eyebrow" data-reveal>AMBININTSOA Antonio · Portfolio</p>
+    <h1 id="home-title" data-reveal>Antonio, <span>développeur web.</span></h1>
+    <p class="hero-description" data-reveal>Des idées qui prennent vie à travers le code.<br> Un regard créatif, une attention à chaque détail.</p>
+    <a class="button hero-button" href="{% url 'project_list' %}#project_list" data-section="project_list" data-reveal>Découvrir mes projets <span class="button-icon">{% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</span></a>
   </div>
-  <figure class="hero-art" data-enter>
-    {% include 'portfolio_site/includes/portrait.html' with priority=True %}
-  </figure>
 </section>

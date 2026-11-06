@@ -1,53 +1,66 @@
-# Antonio — portfolio immersif
+# Antonio — refonte inspirée de Layers
 
-Le brief fourni le 5 novembre 2026 remplace la première piste claire et les prescriptions esthétiques génériques des skills.
+## Direction du 6 novembre 2026
 
-## Système
+Référence explicitement demandée : https://www.getlayers.ai/?via=ig3, inspectée dans Chrome sur ordinateur et téléphone. Cette demande remplace la précédente architecture de six écrans sans défilement et le dock inférieur. La référence détermine la direction ; aucun tirage aléatoire de style n’a été ajouté.
 
-Palette monochrome : noir charbon #090909, surfaces #161616, blanc doux #F4F4F4, texte secondaire #D6D6D6 et gris #A3A3A3. Boutons principaux #EDEDED avec texte #111111. Les panneaux, le dock, les bordures, les survols et les états du formulaire emploient uniquement des gris neutres. Les erreurs restent identifiables par leur texte et leur bordure. La photographie et les captures sont affichées en niveaux de gris par CSS ; les fichiers originaux sont conservés.
+Le portfolio reprend le fond presque noir, la barre supérieure en capsules, le hero gris argenté avec grain, les titres légers, les boutons à flèche circulaire, les grandes vignettes et les surfaces arrondies de Layers. Le noir et blanc demandé auparavant reste présent sur les photographies et les interfaces. Aucun logo ou contenu de marque de Layers, aucune étoile IA ni pastille tricolore.
 
-Verre dépoli réservé au dock et aux fenêtres. Typographie système native, grands titres et navigation discrète. Le portrait photographique d’Antonio accompagne son nom à l’accueil. La signature de navigation reste typographique.
+## Contenu et composition
 
-## Architecture
+L’idée : les sites réalisés par Antonio deviennent une collection d’interfaces à parcourir, avec leur aperçu en premier et leurs informations en dessous.
 
-Django conserve l’administration, les projets illimités, le référencement et le formulaire. Les six vues utilisent un shell unique et des composants de template. Le JavaScript assure les transitions GSAP, les liens profonds, l’historique, le clavier et le tactile. Sans JavaScript, les liens chargent les écrans depuis Django. Aucun défilement vertical du document ; les contenus exceptionnellement longs restent accessibles dans leur fenêtre.
+- Accueil : Antonio, développeur web, et un lien direct vers les réalisations.
+- Projets : Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada, grandes captures sur deux colonnes puis une sur téléphone ; filtrage par catégorie, détails et liens externes.
+- À propos : portrait réel, 20 ans, L2 à l’ESTI Antanimena, alternance chez Befiana Platform, intérêt pour le développement et la photographie.
+- Compétences : données administrables et outils attestés par les projets existants, sans scores inventés.
+- Parcours : formation et alternance, sans dates fictives.
+- Contact : adresse, réseaux, formulaire et demande de CV si aucun PDF n’est disponible.
 
-Les compétences viennent de l’administration. Les technologies complémentaires sont tirées des projets existants. Le parcours dans `portfolio_site/presentation.py` reprend les informations fournies par Antonio, sans dates, expérience ni niveau de maîtrise inventés.
+Les captures des quatre sites et le portrait existaient dans le projet. Aucun visuel de remplacement, image générée ou témoignage fictif. Aucun clip n’a été ajouté : aucune vidéo propre à Antonio n’était disponible, et les aperçus des sites portent la démonstration.
 
-## Image
+## Système visuel
 
-Le visuel généré a été retiré à la demande d’Antonio, ainsi que les étoiles décoratives, le pictogramme de marque et les badges flottants. L’accueil utilise sa photographie existante. Le contrôle des animations utilise les symboles lecture / pause. Les autres images sont celles des projets.
+Fond #080808, surfaces #121212 / #1B1B1B, texte principal #EEEEEE, secondaire #A7A7A7, argent #D5D5D5. Titres 300, corps 400, nom 750. Police Onest variable auto-hébergée, distribuée sous SIL Open Font License ; fichiers et licence dans `portfolio_site/static/portfolio_site/fonts/`. Source : https://github.com/google/fonts/tree/main/ofl/onest.
 
-## Navigation et accessibilité
+Les gradients neutres, bordures, capsules, petits cartouches et tailles de titre proches de 48 px sont intentionnels : ils reprennent la référence choisie par Antonio. Ils dérogent aux préférences génériques de design-taste-frontend. Le lint stylistique les signale encore ; ce ne sont pas des erreurs de compilation. L’inspection a été exécutée avec ces exceptions explicites (`eyebrow,gradient,button-fx,outlined-box,shadow,focal-point,pill-nav,hairline`).
 
-Dock à six destinations, liens directs, retour/précédent du navigateur, flèches gauche/droite hors champs de saisie, Escape pour fermer une fenêtre puis revenir à l’accueil, gestes horizontaux sur les écrans. Les onglets et carrousels disposent de commandes tactiles et clavier. Réduction des animations système et bouton explicite ; aucune animation essentielle à la lecture. Formulaire CSRF, validation serveur, retour JSON accessible et repli HTML.
+## Interactions et accessibilité
 
-## Vérification du rendu
+Défilement vers les sections, menu mobile, lien d’évitement, états de focus, historique du navigateur et accès direct aux fiches. Fenêtre native `dialog` avec focus, fermeture Échap et bouton, récupération des détails avec état d’attente et repli en cas d’échec. Les projets restent accessibles sans JavaScript. Filtres avec `aria-pressed` et annonce du nombre de résultats.
 
-Les six écrans ont été inspectés dans Chrome à 1440 × 900, 768 × 1024, 390 × 844, 375 × 667 et 320 × 568. Aucun défilement du document, aucune image cassée et aucun débordement horizontal involontaire. Les six écrans tiennent dans la fenêtre dès 375 × 667 ; à 320 × 568, les panneaux longs peuvent défiler localement. Les deux étapes du formulaire tiennent aussi sur ce dernier format.
+Apparition progressive des sections via GSAP, déplacement subtil de lumière, zoom léger des aperçus et du portrait. Les préférences système et le bouton en pied de page réduisent les animations. Les contenus restent visibles si JavaScript échoue.
 
-Navigation, historique, interruption des transitions, carrousel, ouverture et fermeture des fiches, sélection des compétences et du parcours, réduction des animations et repli sans JavaScript vérifiés dans le navigateur. Les derniers ajustements du formulaire ont passé les 35 contrôles ciblés. La suite Django passe ses 11 tests ; la compilation CSS et la copie locale de GSAP réussissent. Aucun message réel envoyé lors des vérifications navigateur.
+Le formulaire conserve CSRF, validation serveur, limitation de fréquence et champ piège. Il expose les erreurs aux lecteurs d’écran, empêche les doubles envois, conserve les champs en cas de panne réseau et se réinitialise après confirmation du serveur.
 
-### Critique de la refonte initiale (avant retrait du monogramme)
+## Vérification
 
-ROUND 3
+- Build des assets et du CSS réussi ; syntaxe JavaScript valide.
+- 11 tests Django réussis : routes, brouillons, catégories, sitemap, cache privé, fragments, formulaire HTML/JSON, validation et limitation.
+- 51 contrôles navigateur réussis à 1440 × 900, 768 × 1024, 390 × 844 et 320 × 568 : débordement, images, police, titres, filtres, fiches, Échap, menu, URL directe, réduction des animations, erreurs/succès simulés du formulaire et repli sans JavaScript. Aucun e-mail réel envoyé par ces contrôles.
+- Inspection du CSS compilé : 0 FAIL, 3 WARN avec les exceptions de la référence. Les avertissements restants concernent la variété des tailles, l’absence de vidéo et un faux positif « nom seul » alors que le titre dit « développeur web ».
+- Toutes les planches de l’inspection finale ont été ouvertes et examinées. Scripts, captures et rapports locaux dans `.taste-skill/layers-reference/`, `.taste-skill/layers-review/` et `.taste-skill/layers-qa/`.
 
-Seen in one second: le nom Antonio et son monogramme en verre.
+## Critique visuelle
 
-Idea (one sentence): un espace personnel inspiré d’un bureau numérique, où chaque destination révèle une facette d’Antonio.
+ROUND 2
 
-Live thing: les écrans, onglets, projets et fenêtres se manipulent ; le contact dispose d’une validation et d’un envoi réels.
+Seen in one second: Antonio, développeur web, dans un hero argenté avec accès immédiat à ses projets.
 
-Layout words by section: hero=duo / about=portrait et fenêtres / skills=navigation et outils / projects=carrousel / experience=chronologie / contact=conversation et formulaire.
+Idea (one sentence): les réalisations réelles d’Antonio forment une collection d’interfaces dans la composition sombre de Layers.
 
-Scores: design 7.8 · usability 7.8 · creativity 7.5 · content 8 → overall 7.8
+Live thing: filtrer les réalisations et ouvrir leurs grandes fiches, puis les sites réels.
 
-Caps applied: aucun plafond bloquant ; la palette sombre, les dégradés et le verre suivent le brief explicite. Les écrans de projets utilisent les réalisations existantes, et non des maquettes de remplissage.
+Layout words by section: hero=centré / projets=grands aperçus en grille / profil=portrait et récit / compétences=surfaces en grille / parcours=deux expériences / contact=invitation puis coordonnées et formulaire / footer=signature typographique.
+
+Scores: design 8 · usability 8 · creativity 7 · content 8 → overall 7.8.
+
+Caps applied: créativité plafonnée à 7, puisque la direction reproduit volontairement une référence. Les capsules, bordures et gradients viennent du choix explicite de l’utilisateur.
 
 Top three problems (most visible first), each with the screenshot it shows in and the fix:
 
-1. Les commandes du formulaire étaient coupées sur le format 320 × 568 (`320-contact-step2.jpg`). Corrigé : champs compacts, intitulé court et espacement adapté ; envoi et confidentialité désormais visibles.
-2. La capture d’un projet était trop recadrée sur tablette (`768-project_list.jpg`). Corrigé : composition verticale conservant une grande capture au-dessus de sa description.
-3. Le monogramme débordait de sa zone sur ordinateur (`1440-home.jpg`). Corrigé : image ramenée à la taille de son cadre, avec de la place pour son mouvement.
+1. Premier rendu mobile : « web. » isolé sur une ligne ; corrigé en séparant Antonio et son métier sur deux lignes.
+2. Premier rendu des fiches et du pied de page : légendes trop petites ; texte secondaire remonté à 13 px, descriptions à 16 px, signature du footer éclaircie.
+3. Premier rendu mobile : les filtres repoussaient inutilement les images ; « Tous » remplace le libellé long et le compteur redondant est masqué sur téléphone.
 
-Limites de contenu : aucun CV PDF fourni ; le lien propose une demande par e-mail. Aucune date de formation ou d’alternance inventée. La photo fournie reste utilisée, avec sa définition d’origine.
+Limites restantes : le design suit intentionnellement Layers et n’est donc pas une direction originale ; les images des projets sont des captures statiques. Aucun déploiement distant réalisé pour cette refonte.

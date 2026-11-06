@@ -5,32 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{% block title %}{% if initial_project %}{{ initial_project.seo_title|default:initial_project.title }} — {% elif active_label and active_screen != 'home' %}{{ active_label }} — {% endif %}{{ site_profile.name|default:'AMBININTSOA Antonio' }} · Développeur web{% endblock %}</title>
   <meta name="description" content="{% block description %}{% if initial_project %}{{ initial_project.seo_description|default:initial_project.summary }}{% else %}{{ site_profile.seo_description|default:'L’univers d’AMBININTSOA Antonio, développeur web, étudiant à l’ESTI Antanimena et créatif. Découvrez mes projets, mes compétences et mon parcours.' }}{% endif %}{% endblock %}">
-  <meta name="theme-color" content="#090909">
+  <meta name="theme-color" content="#080808">
   <meta property="og:type" content="website"><meta property="og:locale" content="fr_FR">
   <meta property="og:title" content="{{ site_profile.name|default:'AMBININTSOA Antonio' }} · Développeur web">
   <meta property="og:description" content="{{ site_profile.seo_description|default:'Développement, créativité et nouvelles perspectives. Entrez dans mon univers.' }}">
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23090909'/%3E%3Ctext x='50%25' y='72%25' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='32' fill='%23F4F4F4'%3Ea%3C/text%3E%3C/svg%3E">
+  <link rel="preload" href="{% static 'portfolio_site/fonts/Onest-Variable.ttf' %}" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="{% static 'css/site.css' %}">
-  <noscript><style>[data-about-panel],[data-skill-panel],[data-experience-panel]{display:block!important;margin-bottom:30px}.segmented-control,.skill-navigation,.timeline-steps,.motion-toggle{display:none!important}.screen{overflow-y:auto}.about-window,.skills-window,.timeline-window{flex-shrink:0}</style></noscript>
   <script src="{% static 'js/vendor/gsap.min.js' %}" defer></script>
   <script src="{% static 'js/site.js' %}" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu</a>
-  <div class="ambient" aria-hidden="true"><div class="ambient-light ambient-light-one"></div><div class="ambient-light ambient-light-two"></div><div class="ambient-light ambient-light-three"></div></div>
-  <div class="particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <header class="system-header">
-    <a class="brand" href="{% url 'home' %}" data-route="home" aria-label="Antonio — Accueil"><span>antonio<span class="brand-dot">.</span></span></a>
-    <div class="header-label"><span class="status-light" aria-hidden="true"></span>Portfolio personnel</div>
-    <div class="system-controls"><button class="icon-button motion-toggle" type="button" aria-label="Réduire les animations" aria-pressed="false" title="Réduire les animations">{% include 'portfolio_site/includes/icon.html' with icon='motion' %}</button><a class="header-contact" href="{% url 'contact' %}" data-route="contact">Parlons ensemble {% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</a></div>
+  <header class="site-header">
+    <a class="brand" href="{% url 'home' %}#home" data-section="home" aria-label="Antonio — Accueil">antonio<span>.</span></a>
+    <nav class="main-navigation" id="main-navigation" aria-label="Navigation principale">
+      <a href="{% url 'project_list' %}#project_list" data-section="project_list">Projets</a>
+      <a href="{% url 'about' %}#about" data-section="about">À propos</a>
+      <a href="{% url 'skills' %}#skills" data-section="skills">Compétences</a>
+      <a href="{% url 'experience' %}#experience" data-section="experience">Parcours</a>
+      <a href="{% url 'contact' %}#contact" data-section="contact">Contact</a>
+    </nav>
+    <a class="header-contact" href="{% url 'contact' %}#contact" data-section="contact"><span class="round-icon">{% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</span>Parlons ensemble</a>
+    <button class="menu-toggle icon-button" type="button" aria-expanded="false" aria-controls="main-navigation" aria-label="Ouvrir le menu"><span></span><span></span></button>
   </header>
-  <main id="main" class="desktop" tabindex="-1">{% block content %}{% endblock %}</main>
-  <div class="system-bottom"><a href="{% url 'legal' %}">© {% now 'Y' %} Antonio <span>· Mentions légales</span></a><p class="keyboard-hint"><kbd>←</kbd><kbd>→</kbd> pour explorer</p><p class="screen-position"><span data-screen-number>01</span><span class="position-divider">/</span>06</p></div>
-  <nav class="dock" aria-label="Navigation principale">
-    {% for item in navigation %}<a href="{{ item.url }}" data-route="{{ item.key }}" data-dock-item aria-label="{{ item.label }}" {% if active_screen == item.key %}aria-current="page"{% endif %}>{% include 'portfolio_site/includes/icon.html' with icon=item.icon %}<span>{{ item.label }}</span><i aria-hidden="true"></i></a>{% endfor %}
-  </nav>
-  <p class="sr-only" role="status" aria-live="polite" data-screen-announcement></p>
+  <main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
+  <footer class="site-footer">
+    <div class="footer-top"><p>Du code. Des idées.<br>Et l’envie d’aller plus loin.</p><div class="footer-links"><a href="{% url 'project_list' %}#project_list" data-section="project_list">Mes projets</a><a href="{% url 'contact' %}#contact" data-section="contact">Me contacter</a>{% if site_profile.github_url %}<a href="{{ site_profile.github_url }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{% endif %}{% if site_profile.linkedin_url %}<a href="{{ site_profile.linkedin_url }}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>{% endif %}</div></div>
+    <div class="footer-bottom"><span>© {% now 'Y' %} AMBININTSOA Antonio</span><a href="{% url 'legal' %}">Mentions légales</a><button class="motion-toggle" type="button" aria-pressed="false">Animations : activées</button><a href="{% url 'home' %}#home" data-section="home">Retour en haut ↑</a></div>
+    <a class="footer-wordmark" href="{% url 'home' %}#home" data-section="home" aria-label="Antonio — Retour à l’accueil">antonio.</a>
+  </footer>
   <div class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

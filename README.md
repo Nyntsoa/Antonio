@@ -1,6 +1,6 @@
 # Portfolio d’AMBININTSOA Antonio
 
-Portfolio Django en français, administrable depuis l’interface Django. Six écrans plein écran (accueil, profil, compétences, projets, parcours, contact), dock en verre et transitions GSAP. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et JavaScript.
+Portfolio Django en français, administrable depuis l’interface Django. Page à défilement inspirée de Layers : navigation en capsules, hero argenté, grands aperçus des projets, profil, compétences, parcours et contact. Palette noir et blanc, police Onest locale et animations GSAP. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et JavaScript.
 
 ## Prérequis
 
@@ -41,13 +41,13 @@ Les images téléversées depuis l’administration génèrent automatiquement d
 
 Le CSS compilé et GSAP sont livrés dans le dépôt pour démarrer immédiatement sans CDN. `npm run build` copie GSAP depuis la version installée, puis compile le CSS. Relancez la compilation après modification des styles.
 
-## Navigation immersive
+## Navigation et aperçu
 
 Pour prévisualiser ce projet localement avec SQLite, lancez `npm run dev`, puis ouvrez `http://127.0.0.1:8011/`. Cette commande active le mode développement sans modifier `.env`. Pour choisir une autre base uniquement pour cet aperçu, exportez `PORTFOLIO_PREVIEW_DATABASE_URL`.
 
-Les liens du dock changent d’écran sans recharger la page. Les URL directes et le retour du navigateur restent fonctionnels. Les flèches gauche/droite changent d’écran ; dans les commandes des projets elles changent de projet. Échap ferme une étude de cas, puis ramène à l’accueil. Le tactile dispose des mêmes liens et du balayage horizontal. Le défilement du document est bloqué ; les fenêtres longues peuvent défiler localement pour rester accessibles.
+Les liens supérieurs font défiler la page vers chaque section sans rechargement. Les URL directes et l’historique du navigateur restent fonctionnels. Sur mobile, le menu se replie. Les projets se filtrent par catégorie et leurs détails s’ouvrent dans une fenêtre accessible au clavier ; Échap la ferme. Chaque projet conserve également sa page directe et son lien vers le site réel.
 
-Les préférences de réduction des animations sont respectées, avec un bouton supplémentaire en haut de l’écran. Le formulaire utilise une réponse JSON pour l’envoi sans navigation, et un repli HTML sans JavaScript. Sur mobile, il se présente en deux étapes. Sans PDF dans le profil, le lien CV permet d’en faire la demande par e-mail.
+Les préférences de réduction des animations sont respectées, avec un bouton supplémentaire en pied de page. Le formulaire utilise une réponse JSON pour l’envoi sans navigation, et un repli HTML sans JavaScript. Ses champs restent visibles sur mobile. Sans PDF dans le profil, le lien CV permet d’en faire la demande par e-mail.
 
 La biographie et le parcours fournis par Antonio sont dans les templates `screens/` et `portfolio_site/presentation.py`. Les projets et les compétences restent administrables. Le système visuel et ses choix sont documentés dans [DESIGN.md](DESIGN.md).
 
