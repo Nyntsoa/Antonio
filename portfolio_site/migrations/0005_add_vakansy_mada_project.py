@@ -7,21 +7,21 @@ def add_vakansy_mada(apps, schema_editor):
     database = schema_editor.connection.alias
 
     category, _ = Category.objects.using(database).get_or_create(
-        slug="application-web",
-        defaults={"name": "Application web", "order": 3},
+        slug="tourisme",
+        defaults={"name": "Tourisme", "order": 4},
     )
     Project.objects.using(database).get_or_create(
         slug="vakansy-mada",
         defaults={
             "title": "Vakansy Mada",
             "category": category,
-            "summary": "Plateforme dédiée aux offres d’emploi à Madagascar.",
+            "summary": "Site de voyage pour découvrir Madagascar à votre rythme.",
             "live_url": "https://vakansymada.vercel.app/",
-            "context": "Une plateforme web autour de la recherche d’emploi à Madagascar.",
+            "context": "Site de présentation des voyages Vakansy à Madagascar.",
             "status": "published",
             "order": 4,
-            "seo_title": "Vakansy Mada — Offres d’emploi à Madagascar",
-            "seo_description": "Découvrez Vakansy Mada, une plateforme malgache dédiée à la recherche d’offres d’emploi.",
+            "seo_title": "Vakansy Mada — Voyager à Madagascar",
+            "seo_description": "Découvrez Vakansy, des voyages de Madagascar des Hautes Terres aux rives de l’océan Indien.",
         },
     )
 
