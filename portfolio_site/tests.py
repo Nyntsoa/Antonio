@@ -18,7 +18,7 @@ class PortfolioPagesTests(TestCase):
         )
 
     def test_main_pages_render(self):
-        for name in ("home", "about", "skills", "project_list", "experience", "services", "contact", "legal"):
+        for name in ("home", "about", "skills", "project_list", "explorations", "materials", "interfaces", "photography", "services", "contact", "legal"):
             with self.subTest(page=name):
                 self.assertEqual(self.client.get(reverse(name)).status_code, 200)
         self.assertEqual(self.client.get(reverse("project_detail", args=[self.published.slug])).status_code, 200)
@@ -64,17 +64,69 @@ class PortfolioPagesTests(TestCase):
         self.assertEqual(ContactMessage.objects.count(), 0)
 
     def test_screen_deep_links_are_session_private(self):
-        for name in ("home", "about", "skills", "project_list", "experience", "contact"):
+        for name in ("home", "about", "skills", "project_list", "explorations", "materials", "interfaces", "photography", "contact"):
             with self.subTest(screen=name):
                 response = self.client.get(reverse(name))
                 self.assertContains(response, f'data-active-screen="{name}"')
                 self.assertIn("private", response.headers["Cache-Control"])
-                self.assertContains(response, 'name="csrfmiddlewaretoken"')
+                if name == 'contact':
+                    self.assertContains(response, 'name="csrfmiddlewaretoken"')
+                else:
+                    self.assertNotContains(response, 'data-contact-form')
 
-    def test_project_fragments_exclude_drafts(self):
+    def test_pages_render_only_their_own_content(self):
+        home = self.client.get(reverse('home'))
+        self.assertNotContains(home, 'id="skills"')
+        self.assertNotContains(home, 'id="experience"')
+        projects = self.client.get(reverse('project_list'))
+        self.assertContains(projects, 'data-project-card')
+        self.assertNotContains(projects, 'class="concept-art')
+        self.assertNotContains(projects, 'id="home"')
+        explorations = self.client.get(reverse('explorations'))
+        self.assertContains(explorations, 'class="concept-art')
+        self.assertNotContains(explorations, 'data-project-card')
+        self.assertContains(self.client.get(reverse('about')), 'id="experience"')
+
+    def test_project_is_an_independent_case_study(self):
+        self.published.design_notes = 'Une identité contrastée.'
+        self.published.challenges = 'Un retour technique documenté.'
+        self.published.solutions = 'Une solution renseignée par Antonio.'
+        self.published.save()
+        response = self.client.get(self.published.get_absolute_url())
+        for text in ('Une identité contrastée.', 'Un retour technique documenté.', 'Une solution renseignée par Antonio.', 'id="galerie"', 'id="bilan"'):
+            self.assertContains(response, text)
+        self.assertNotContains(response, 'id="project-dialog"')
+        self.assertNotContains(response, self.draft.get_absolute_url())
+        self.assertTrue(self.published.get_absolute_url().startswith('/projets/'))
+
+    def test_creative_detail_urls_and_labels(self):
+        from .presentation import creative_items
+        for url in (item['url'] for item in creative_items()):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, 'sans commande client')
+                self.assertContains(response, 'data-art-stage')
+                self.assertContains(response, f'<link rel="canonical" href="http://testserver{url}">')
+        self.assertEqual(self.client.get('/matieres/mora/').status_code, 404)
+        self.assertEqual(self.client.get('/explorations/inconnue/').status_code, 404)
+
+    def test_legacy_urls_redirect_to_canonical_pages(self):
+        self.assertRedirects(self.client.get('/realisations/'), reverse('project_list'), status_code=301)
+        self.assertRedirects(self.client.get('/realisations/projet-publie/'), self.published.get_absolute_url(), status_code=301)
+        self.assertRedirects(self.client.get(reverse('experience')), reverse('about') + '#experience', status_code=301)
+
+    def test_page_metadata_and_search_follow_routes(self):
+        response = self.client.get(reverse('materials'))
+        self.assertContains(response, '<title>Matières —')
+        self.assertContains(response, 'href="/matieres/" aria-current="page"')
+        self.assertContains(response, 'href="/interfaces/focus/" data-search-result')
+        self.assertContains(response, f'href="{self.published.get_absolute_url()}" data-search-result')
+        self.assertNotContains(response, self.draft.get_absolute_url())
+
+    def test_old_fragment_query_still_opens_full_page_and_excludes_drafts(self):
         response = self.client.get(self.published.get_absolute_url(), {"fragment": "1"})
-        self.assertContains(response, 'class="project-case"')
-        self.assertNotContains(response, '<html')
+        self.assertContains(response, 'class="project-detail ')
+        self.assertContains(response, '<html')
         self.assertEqual(self.client.get(self.draft.get_absolute_url(), {"fragment": "1"}).status_code, 404)
 
     def test_contact_json_validation_and_delivery(self):

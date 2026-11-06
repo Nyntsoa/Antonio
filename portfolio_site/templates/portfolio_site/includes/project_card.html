@@ -1,0 +1,4 @@
+<article class="project-card" data-project-card data-category="{{ project.category.slug }}" data-reveal>
+  <a class="project-preview" href="{{ project.get_absolute_url }}" aria-label="Découvrir {{ project.title }}">{% include 'portfolio_site/includes/project_image.html' with image_sizes='(max-width: 760px) 94vw, 48vw' %}<span class="tile-badge">{% if project.demo_label %}{{ project.demo_label }}{% else %}Réalisation{% endif %}</span><span class="preview-open" aria-hidden="true">{% include 'portfolio_site/includes/icon.html' with icon='arrow-up' %}</span></a>
+  <div class="project-info"><div class="project-title-row"><h2><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h2><span>{{ project.category.name }}</span></div><p>{{ project.summary }}</p><a class="text-link" href="{{ project.get_absolute_url }}">Explorer le projet ↗</a></div>
+</article>

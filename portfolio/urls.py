@@ -4,9 +4,9 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views.decorators.cache import cache_control
-from portfolio_site.sitemaps import StaticViewSitemap, ProjectSitemap
+from portfolio_site.sitemaps import StaticViewSitemap, ProjectSitemap, CreativeSitemap
 
-sitemaps = {"pages": StaticViewSitemap, "projects": ProjectSitemap}
+sitemaps = {"pages": StaticViewSitemap, "projects": ProjectSitemap, "explorations": CreativeSitemap}
 sitemap_view = cache_control(
     public=True,
     max_age=0,

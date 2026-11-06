@@ -1,6 +1,6 @@
 # Portfolio d’AMBININTSOA Antonio
 
-Portfolio Django en français, administrable depuis l’interface Django. Page à défilement reprenant la structure de Layers : navigation en capsules, recherche, hero argenté, cinq galeries de douze cases, blocs de compétences, démarche, profil, parcours, FAQ et contact. Palette noir et blanc, titres General Sans, texte Onest et animations GSAP. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et JavaScript.
+Portfolio Django en français, administrable depuis l’interface Django. Neuf espaces indépendants, une navigation persistante, un menu plein écran et des pages détaillées pour les réalisations et les explorations. L’identité inspirée de Layers est conservée : noir et blanc, reflets argentés, General Sans, Onest et animations GSAP. SQLite fonctionne en local ; une URL PostgreSQL active la base de production. L’interface utilise des templates Django, Tailwind CSS compilé et JavaScript.
 
 ## Prérequis
 
@@ -45,13 +45,19 @@ Le CSS compilé, GSAP et Onest sont livrés dans le dépôt. General Sans est ch
 
 Pour prévisualiser ce projet localement avec SQLite, lancez `npm run dev`, puis ouvrez `http://127.0.0.1:8011/`. Cette commande active le mode développement sans modifier `.env`. Pour choisir une autre base uniquement pour cet aperçu, exportez `PORTFOLIO_PREVIEW_DATABASE_URL`.
 
-Les liens supérieurs font défiler la page vers chaque section sans rechargement. Les URL directes et l’historique du navigateur restent fonctionnels. Sur mobile, le menu se replie. La recherche, accessible aussi avec `/`, retrouve les projets, les concepts et les sections. Les détails s’ouvrent dans une fenêtre accessible au clavier ; Échap la ferme. Chaque réalisation conserve sa page directe et son lien vers le site réel. Les collections se déploient avec leur bouton, les étapes de la démarche se parcourent au clavier et la FAQ utilise des accordéons natifs.
+Chaque URL rend uniquement le contenu de son espace : `/`, `/projets/`, `/explorations/`, `/matieres/`, `/interfaces/`, `/photographie/`, `/competences/`, `/a-propos/` et `/contact/`. Le parcours fait partie de la page À propos, la démarche de Compétences et la FAQ de Contact. La barre des espaces défile horizontalement sur petit écran ; le menu plein écran donne accès aux neuf destinations.
+
+Les pages projet suivent `/projets/<slug>/`. Elles réunissent une grande capture, cinq chapitres, les textes existants, des captures desktop/mobile, les technologies et la navigation entre projets. Les concepts ont eux aussi des URL directes, par exemple `/explorations/mora/`, `/matieres/orbite/` et `/interfaces/focus/`. Les anciennes URL `/realisations/` et `/parcours/` redirigent vers les nouvelles destinations. Les anciens signets de sections sont également pris en charge.
+
+Le navigateur gère les documents, l’historique et la restauration du défilement. GSAP anime la sortie et l’entrée sans routeur client, sans requête de fragment et sans modifier `history`. Les liens fonctionnent sans JavaScript, avec les touches modificatrices et dans un nouvel onglet. La recherche (`/`) est disponible depuis chaque page. Les captures et le portrait peuvent être agrandis dans des fenêtres accessibles au clavier ; Échap les ferme.
 
 Les préférences de réduction des animations sont respectées, avec un bouton supplémentaire en pied de page. Le formulaire utilise une réponse JSON pour l’envoi sans navigation, et un repli HTML sans JavaScript. Ses champs restent visibles sur mobile. Sans PDF dans le profil, le lien CV permet d’en faire la demande par e-mail.
 
 La biographie et le parcours fournis par Antonio sont dans les templates `screens/` et `portfolio_site/presentation.py`. Les projets et les compétences restent administrables. Le système visuel et ses choix sont documentés dans [DESIGN.md](DESIGN.md).
 
-Les collections supplémentaires ont été demandées pour conserver la densité de la référence malgré le nombre limité de réalisations. Les concepts fictifs et les études visuelles sont définis dans `portfolio_site/presentation.py`, clairement étiquetés, et ne sont pas enregistrés comme projets clients en base. Les cases « À venir » sont volontairement vides. Les créations graphiques sont réalisées en HTML/CSS.
+Les 28 concepts et études sont définis dans `portfolio_site/presentation.py`. Le registre `creative_items()` alimente leurs galeries, leurs pages, la recherche et le sitemap. Les quatre concepts fictifs et huit études de formes composent Explorations ; les huit matières et huit interfaces ont leurs propres espaces. Ces créations HTML/CSS restent distinctes des réalisations gérées en base. La page Photographie conserve le portrait réel et annonce les prochaines séries.
+
+Les compléments de présentation et les captures vérifiées des quatre sites se trouvent dans `portfolio_site/project_cases.py`. Ils ne remplacent pas les textes saisis en base. La migration `0007_project_case_details` ajoute trois champs facultatifs administrables : identité visuelle, difficultés et solutions. Aucun résultat ni retour technique absent n’est inventé. Un nouveau projet publié est automatiquement accessible dans le catalogue, la recherche, la navigation précédent/suivant et le sitemap, même sans entrée dans ce fichier.
 
 ## Administration
 

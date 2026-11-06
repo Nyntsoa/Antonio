@@ -1,0 +1,4 @@
+{% include 'portfolio_site/includes/page_intro.html' with eyebrow='Nuances, lumière et mouvement' heading='Toutes les nuances du noir.' %}
+<div class="collection-note"><span>Études graphiques · Noir & blanc</span><span>{{ studies|length }} matières</span></div>
+<div class="collection-grid study-catalogue material-catalogue">{% for item in studies %}{% include 'portfolio_site/includes/study_card.html' %}{% endfor %}</div>
+<p class="collection-disclosure">Ouvrez une composition pour découvrir sa construction et la mettre en mouvement.</p>

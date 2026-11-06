@@ -1,22 +1,22 @@
-# Antonio — composition Layers
+# Antonio — espaces indépendants
 
 ## Référence et intention
 
-La demande du 6 novembre 2026 est de reprendre le design de https://www.getlayers.ai/?via=ig3 avec la même densité, en ajoutant des cases vides et du contenu fictif lorsque nécessaire. La page de référence a été examinée dans Chrome et son HTML consulté directement.
+La nouvelle demande transforme la longue page issue de la référence Layers en un portfolio multipage. L’identité existante est conservée ; la navigation devient une porte d’entrée vers neuf espaces distincts.
 
-La composition reprend la navigation en capsules accompagnée d’une recherche, le hero argenté avec grain, les titres fins General Sans, les grilles de quatre colonnes, les légendes sous les visuels, les rangées finales estompées et leurs boutons, les blocs de compétences, le sommaire fixe de la démarche, la FAQ et le grand pied de page. Les grilles passent à deux colonnes sur téléphone.
+La composition conserve le hero argenté avec grain, les titres fins General Sans, les surfaces sombres et les légendes sous les visuels. Une barre persistante indique l’espace ouvert ; un menu plein écran présente toutes les destinations. Les pages intérieures ont un fil d’Ariane, une navigation entre espaces et un pied de page compact. Les galeries sont entièrement accessibles, sans masquer leurs dernières rangées.
 
 Le noir et blanc des demandes précédentes est conservé. Les marques IA et les pastilles tricolores restent absentes. Les assets, le code métier et les textes de Layers ne sont pas intégrés au portfolio.
 
 ## Collections et contenu
 
-Cinq collections de douze cases : projets, explorations visuelles, matières, interfaces et photographie. Avec les quatre projets actuellement publiés, cela représente 60 cases : quatre réalisations en ligne, un portrait réel, 28 concepts ou études graphiques et 27 emplacements vides.
+Neuf pages : Accueil, Projets, Explorations, Matières, Interfaces, Photographie, Compétences, À propos et Contact. L’accueil donne un aperçu et des raccourcis. Le parcours rejoint À propos, la démarche rejoint Compétences, et la FAQ rejoint Contact. Les cases vides répétées ont été remplacées par des collections dédiées et une annonce des prochaines séries photographiques.
 
-Les réalisations réelles restent Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada. Leurs fiches montrent une grande capture en haut, puis leurs informations et leur lien externe. Les nouvelles propositions fictives Mora, Rivo, Cadrage et Nocturne sont étiquetées « Concept ». Les études de forme, de matière et d’interface disposent aussi de leur propre aperçu. Elles ne sont pas présentées comme des missions clients.
+Les réalisations restent Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada. Le catalogue ne contient que les projets publiés. Chaque page `/projets/<slug>/` présente une grande capture puis cinq chapitres : présentation, design, galerie, développement et bilan. Les captures supplémentaires desktop/mobile ont été prises sur les quatre sites, vérifiées visuellement et compressées en WebP. Les images s’agrandissent dans une fenêtre accessible. Les projets précédent et suivant restent disponibles en bas de page.
 
-Les cases « À venir » sont volontaires, conformément à la demande. Les illustrations de concepts sont composées en HTML/CSS ; aucune photographie de client ou réalisation externe n’est utilisée pour les représenter.
+Mora, Rivo, Cadrage et Nocturne restent explicitement fictifs. Avec les huit études de formes, ils constituent Explorations. Huit matières et huit interfaces composent leurs espaces respectifs. Les 28 études ont chacune une URL, un aperçu grand format, une intention, des notes graphiques et une animation facultative. Les illustrations sont composées en HTML/CSS.
 
-Les données des concepts, études et FAQ se trouvent dans `portfolio_site/presentation.py`. Aucun ajout fictif à la table des projets, aucune migration et aucun faux résultat professionnel. Le parcours personnel fourni par Antonio est conservé.
+`portfolio_site/presentation.py` centralise navigation, descriptions, concepts, études et FAQ. Les textes personnels et professionnels existants restent conservés. `project_cases.py` complète la présentation des projets avec des éléments visibles sur les sites, sans modifier les champs existants. La migration `0007_project_case_details` ajoute trois champs facultatifs : design, difficultés et solutions. Les difficultés non renseignées sont signalées comme restant à documenter ; aucun historique technique ni résultat chiffré n’est inventé.
 
 ## Typographie et palette
 
@@ -26,16 +26,17 @@ Fond #080808, surfaces #121212 et #1B1B1B, texte #EEEEEE, secondaire #A7A7A7. Re
 
 ## Interactions
 
-- Recherche insensible aux accents, projets et concepts ouvrables depuis les résultats, raccourci `/`, état sans résultat.
-- Collections déployables et réduction des collections, avec état `aria-expanded`.
-- Fenêtres natives pour les projets et les concepts, focus et fermeture Échap.
-- Démarche avec navigation fixe sur ordinateur, onglets compacts sur téléphone, flèches du clavier et Home/End.
-- FAQ native, menu mobile, navigation par section, liens directs et historique.
+- Recherche insensible aux accents et accessible avec `/` depuis chaque espace. Les résultats ouvrent les URL des pages.
+- Menu plein écran, focus contenu dans la fenêtre, fermeture Échap, flèches haut/bas et Home/End dans les destinations.
+- Barre des espaces horizontale sur petit écran, état actif rendu par Django, liens précédent/suivant et fil d’Ariane.
+- Navigation native entre documents, avec sortie/entrée GSAP. Aucun routeur client ni historique artificiel : retour, suivant, actualisation et restauration du défilement restent gérés par le navigateur.
+- Pages projet avec navigation par chapitres ; fenêtres natives uniquement pour agrandir les images et le portrait.
+- Démarche en onglets sur toutes les tailles d’écran ; FAQ native.
 - Formulaire Django existant : CSRF, validation serveur, limitation de fréquence, erreurs accessibles et conservation des champs en cas de panne réseau.
-- Animations GSAP et préférences de réduction des animations. Les réalisations réelles et le formulaire restent accessibles sans JavaScript.
+- Animations GSAP et préférence de réduction des animations persistante. Les projets, les concepts et le formulaire restent accessibles sans JavaScript. L’animation des études est déclenchée par le visiteur et peut être mise en pause.
 
 ## Vérification
 
-Compilation CSS et assets réussie, syntaxe JavaScript et vérification Django sans erreur. Les 11 tests Django existants passent. Les contrôles navigateur couvrent 1440 × 900, 768 × 1024, 390 × 844 et 320 × 568, les grilles, les emplacements, la recherche, les fenêtres, Échap, les collections, les étapes, le menu, la FAQ et le repli sans JavaScript.
+La suite Django vérifie les pages indépendantes, les métadonnées, les anciennes URL, les brouillons, les contenus des études de cas, les concepts, le sitemap et le formulaire. Les contrôles navigateur couvrent 1440 × 900, 768 × 1024, 390 × 844 et 320 × 568, ainsi que retour/suivant/actualisation, restauration du défilement, recherche, menu, clavier, agrandissement des captures, animation facultative, réduction des animations et repli sans JavaScript.
 
 Les captures de la référence et du rendu ainsi que les scripts de contrôle sont stockés dans le dossier temporaire de la session, hors du dépôt. Aucun outil de design supprimé n’a été réinstallé dans le projet. Aucun déploiement distant n’a été effectué.

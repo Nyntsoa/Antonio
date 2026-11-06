@@ -1,0 +1,4 @@
+{% include 'portfolio_site/includes/page_intro.html' with eyebrow='Des détails qui font l’expérience' heading='Interfaces & interactions.' %}
+<div class="collection-note"><span>Maquettes conceptuelles · UI / UX</span><span>{{ studies|length }} interfaces</span></div>
+<div class="collection-grid study-catalogue interface-catalogue">{% for item in studies %}{% include 'portfolio_site/includes/study_card.html' %}{% endfor %}</div>
+<p class="collection-disclosure">Chaque maquette explore un principe d’interface. Aucune n’est présentée comme une réalisation client.</p>

@@ -1,19 +1,8 @@
 {% extends 'portfolio_site/base.html' %}
 {% block content %}
-<div class="portfolio-page" data-active-screen="{{ active_screen }}">
-  {% include 'portfolio_site/screens/home.html' %}
-  {% include 'portfolio_site/screens/projects.html' %}
-  {% include 'portfolio_site/screens/skills.html' %}
-  {% include 'portfolio_site/screens/explorations.html' %}
-  {% include 'portfolio_site/screens/method.html' %}
-  {% include 'portfolio_site/screens/about.html' %}
-  {% include 'portfolio_site/screens/experience.html' %}
-  {% include 'portfolio_site/screens/faq.html' %}
-  {% include 'portfolio_site/screens/contact.html' %}
+<div class="portfolio-page multipage-page page-{{ active_screen }}" data-active-screen="{{ active_screen }}">
+  {% if active_screen != 'home' %}<nav class="breadcrumbs" aria-label="Fil d’Ariane"><a href="{% url 'home' %}">Accueil</a><span aria-hidden="true">/</span>{% if project or study %}<a href="{% url active_screen %}">{{ active_label }}</a><span aria-hidden="true">/</span><span aria-current="page">{% if project %}{{ project.title }}{% else %}{{ study.title }}{% endif %}</span>{% else %}<span aria-current="page">{{ active_label }}</span>{% endif %}<span class="space-number">Espace {{ page_number }} / 09</span></nav>{% endif %}
+  {% include screen_template %}
+  {% if not project and not study %}<nav class="space-pagination" aria-label="Continuer l’exploration"><a href="{{ previous_space.url }}"><span>← Espace précédent</span><strong>{{ previous_space.label }}</strong></a><span class="pagination-center">{{ page_number }} / 09</span><a href="{{ next_space.url }}"><span>Espace suivant →</span><strong>{{ next_space.label }}</strong></a></nav>{% endif %}
 </div>
-<dialog class="project-dialog" id="project-dialog" aria-label="Détails du projet" {% if initial_project %}open{% endif %}>
-  <div class="dialog-toolbar"><span>Dans les détails</span><a class="icon-button" href="{% url 'project_list' %}#project_list" data-close-dialog aria-label="Fermer le projet">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</a></div>
-  <div class="dialog-content" data-project-content>{% if initial_project %}{% include 'portfolio_site/includes/project_case.html' with project=initial_project %}{% endif %}</div>
-</dialog>
-<dialog class="concept-dialog" id="concept-dialog" aria-label="Aperçu du concept"><div class="dialog-toolbar"><span>Exploration · Concept fictif</span><button class="icon-button" type="button" data-close-concept aria-label="Fermer le concept">{% include 'portfolio_site/includes/icon.html' with icon='close' %}</button></div><div class="concept-dialog-content" data-concept-content></div></dialog>
 {% endblock %}

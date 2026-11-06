@@ -3,12 +3,27 @@ from django.urls import reverse
 
 SCREEN_DEFINITIONS = [
     ('home', 'Accueil', 'home'),
-    ('about', 'À propos', 'person'),
-    ('skills', 'Compétences', 'code'),
     ('project_list', 'Projets', 'grid'),
-    ('experience', 'Parcours', 'briefcase'),
+    ('explorations', 'Explorations', 'pen'),
+    ('materials', 'Matières', 'grid'),
+    ('interfaces', 'Interfaces', 'layout'),
+    ('photography', 'Photographie', 'camera'),
+    ('skills', 'Compétences', 'code'),
+    ('about', 'À propos', 'person'),
     ('contact', 'Contact', 'mail'),
 ]
+
+PAGE_DESCRIPTIONS = {
+    'home': 'Développement, créativité et nouvelles perspectives. Entrez dans l’univers d’AMBININTSOA Antonio.',
+    'project_list': 'Les réalisations web d’Antonio : Tsarakaly, MADA MARKET, Gilasy et Vakansy Mada. Découvrez chaque projet en détail.',
+    'explorations': 'Un laboratoire d’idées : concepts fictifs et expérimentations personnelles autour du web, des formes et de la lumière.',
+    'materials': 'Des compositions monochromes pour explorer les contrastes, les reflets et la profondeur.',
+    'interfaces': 'Des explorations UI/UX autour de la navigation, de la typographie et des interactions.',
+    'photography': 'L’autre côté de mon regard. Portrait et place aux prochaines séries photographiques.',
+    'skills': 'Les technologies, les outils et la démarche d’Antonio, de l’idée à la mise en ligne.',
+    'about': 'Antonio, développeur web de 20 ans, étudiant en L2 à l’ESTI Antanimena et en alternance chez Befiana Platform.',
+    'contact': 'Un projet web, une opportunité ou une idée à partager ? Échangeons par e-mail ou avec le formulaire de contact.',
+}
 
 SKILL_GROUPS = [
     {'key': 'frontend', 'name': 'Frontend', 'icon': 'layout', 'title': 'L’interface prend vie.',
@@ -41,8 +56,9 @@ EXPERIENCES = [
 
 
 def navigation():
-    return [{'key': key, 'label': label, 'icon': icon, 'url': reverse(key)}
-            for key, label, icon in SCREEN_DEFINITIONS]
+    return [{'key': key, 'label': label, 'icon': icon, 'url': reverse(key),
+             'number': f'{index:02}', 'description': PAGE_DESCRIPTIONS[key]}
+            for index, (key, label, icon) in enumerate(SCREEN_DEFINITIONS, 1)]
 
 
 def skill_groups(skills):
@@ -98,3 +114,38 @@ PORTFOLIO_FAQ = [
     {'question': 'Comment discuter d’un projet ?', 'answer': 'Vous pouvez utiliser le formulaire de contact ou m’écrire directement par e-mail. Présentez votre idée, vos besoins et le calendrier envisagé.'},
     {'question': 'Où trouver votre CV ?', 'answer': 'Le bouton de la section À propos permet de télécharger mon CV lorsqu’il est disponible, ou de me le demander par e-mail.'},
 ]
+
+
+def creative_items():
+    """One registry powers collection cards, search and directly addressable studies."""
+    items = []
+    for concept in PORTFOLIO_CONCEPTS:
+        items.append({**concept, 'family': 'explorations', 'type': 'concept',
+                      'label': 'Concept fictif', 'art_template': 'concept_art.html',
+                      'inspiration': concept['caption'],
+                      'details': 'Typographie, rythme et composition forment une direction visuelle pour un univers imaginaire.',
+                      'motion': 'Une légère mise en mouvement du volume permet de regarder la composition autrement.'})
+    for study in VISUAL_STUDIES:
+        items.append({**study, 'family': 'explorations', 'type': 'study',
+                      'label': 'Expérimentation personnelle', 'art_template': 'study_art.html',
+                      'description': 'Une étude graphique autour de la forme, de la lumière et de la matière. Exploration créée pour le laboratoire du portfolio.',
+                      'inspiration': study['category'],
+                      'details': 'Des volumes simples, des ombres graduelles et des contrastes monochromes donnent de la profondeur à la composition.',
+                      'motion': 'Le mouvement fait varier la perception du volume, tout en gardant une lecture calme.'})
+        items.append({**study, 'family': 'materials', 'type': 'material',
+                      'label': 'Étude graphique', 'art_template': 'material_art.html',
+                      'description': 'Une composition monochrome pour explorer les contrastes, les reflets et la profondeur.',
+                      'inspiration': study['category'],
+                      'details': 'Les dégradés et les répétitions dessinent une matière sans photographie ni texture bitmap. Toute la composition est réalisée en CSS.',
+                      'motion': 'Une variation progressive de la lumière révèle les nuances entre le noir et le blanc.'})
+    for study in INTERFACE_STUDIES:
+        items.append({**study, 'family': 'interfaces', 'type': 'interface',
+                      'label': 'Maquette conceptuelle', 'art_template': 'interface_art.html',
+                      'description': f'Une proposition d’interface autour de {study["category"].lower()}. Cette maquette est une exploration graphique, sans projet client associé.',
+                      'inspiration': study['category'],
+                      'details': 'La hiérarchie du contenu, les proportions des composants et le contraste servent de terrain d’expérimentation.',
+                      'motion': 'Une transition douce permet d’observer le rapport entre l’interface et son cadre.'})
+    for item in items:
+        item['url'] = reverse('creative_detail', kwargs={'space': {'explorations': 'explorations', 'materials': 'matieres', 'interfaces': 'interfaces'}[item['family']], 'slug': item['key']})
+        item['art_template'] = 'portfolio_site/includes/' + item['art_template']
+    return items

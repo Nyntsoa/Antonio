@@ -1,0 +1,3 @@
+{% include 'portfolio_site/screens/about.html' %}
+{% if site_profile.intro or site_profile.journey %}<div class="profile-personal-note feature-panel">{% if site_profile.intro %}<p>{{ site_profile.intro|linebreaksbr }}</p>{% endif %}{% if site_profile.journey %}<p>{{ site_profile.journey|linebreaksbr }}</p>{% endif %}</div>{% endif %}
+{% include 'portfolio_site/screens/experience.html' %}
